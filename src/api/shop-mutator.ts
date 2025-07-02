@@ -6,22 +6,59 @@ import { useAuthStore } from '@/stores/authStore'
 
 export const shopApiClient = axios.create({
 //   baseURL: import.meta.env.VITE_SHOP_API_BASE_URL || 'http://localhost:8000/api',
-  baseURL: 'http://localhost:8000/',
+  baseURL: 'http://localhost:8000',
   withCredentials: true, 
   headers: {
     'Content-Type': 'application/json',
   },
 })
 
-/**
- * Response interceptor to handle authentication failures globally
- */
+const getCSRFToken = (): string | null => {
+  const cookies = document.cookie.split(';');
+  for (let cookie of cookies) {
+    const [name, value] = cookie.trim().split('=');
+    if (name === 'csrftoken') {
+      return decodeURIComponent(value);
+    }
+  }
+  return null;
+};
+
+shopApiClient.interceptors.request.use((config) => {
+  const csrfToken = getCSRFToken();
+  if (csrfToken) {
+    config.headers['X-CSRFToken'] = csrfToken;
+  }
+  return config;
+});
+
+
 shopApiClient.interceptors.response.use(
-  (response: AxiosResponse) => response,
+//   (response: AxiosResponse) => response,
+  (response: AxiosResponse) => {
+    console.log('✅ Shop API Response:', {
+      status: response.status,
+      statusText: response.statusText,
+      url: response.config.url,
+      method: response.config.method?.toUpperCase(),
+      contentType: response.headers['content-type'],
+      dataType: typeof response.data,
+      dataSize: JSON.stringify(response.data).length,
+      timestamp: new Date().toISOString(),
+    })
+    
+    if (typeof response.data === 'string') {
+      console.log('📄 Response Preview:', response.data.substring(0, 200) + '...')
+    } else {
+      console.log('📊 Response Data:', response.data)
+    }
+    
+    return response
+  },
   (error) => {
     const status = error.response?.status
 
-    if (status === 401 || status === 403) {
+    if (status === 401) {
       const { clearSession } = useAuthStore.getState()
       
       clearSession()
@@ -36,7 +73,10 @@ shopApiClient.interceptors.response.use(
 
     if (status === 404) {
       toast.error('Resource not found')
-    } else if (status === 500) {
+    } else if (status === 403) {
+        toast.error('You do not have permission to access this resource.')
+    }
+    else if (status >= 500) {
       toast.error('Server error. Please try again later.')
     } else if (status >= 400 && status < 500) {
       const message = error.response?.data?.detail || 
@@ -48,6 +88,8 @@ shopApiClient.interceptors.response.use(
     return Promise.reject(error)
   }
 )
+
+
 
 
 export const shopInstance = <T>(config: AxiosRequestConfig): Promise<T> => {

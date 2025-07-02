@@ -6,19 +6,16 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   BarChart3,
   Package,
-  ShoppingCart,
-  Users,
-  Settings,
-  Tag,
-  TrendingUp,
   ShoppingBag,
   ChevronLeft,
   ChevronRight,
+  Tag,
 } from "lucide-react"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
   { name: "Products", href: "/catalog/products", icon: Package },
+  { name: "Tags", href: "/catalog/tags", icon: Tag },
 ]
 
 export default function Sidebar() {

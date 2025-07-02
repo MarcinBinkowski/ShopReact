@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { AuthenticatedResponse } from '@/api/generated/auth/schemas'
+import { AuthenticatedResponse } from '@/api/generated/auth/schemas'
 
 interface AuthState {
   session: AuthenticatedResponse | null

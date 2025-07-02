@@ -14,10 +14,11 @@ import {
 } from '@/api/generated/auth/authentication-account/authentication-account'
 
 import {
-  type PostAllauthClientV1AuthLoginMutationBody,
+  PostAllauthClientV1AuthLoginMutationBody,
 } from '@/api/generated/auth/authentication-account/authentication-account'
 
 import { useQueryClient } from '@tanstack/react-query'
+import { useEffect } from 'react'
 
 export const useAuth = () => {
   const navigate = useNavigate()
@@ -26,11 +27,15 @@ export const useAuth = () => {
   
   // Use Orval-generated hooks directly
   const sessionQuery = useGetAllauthClientV1AuthSession('browser', {
-    query: {
-      onSuccess: (data) => setSession(data),
-      onError: () => setSession(null),
-    },
+    query: {},
   })
+
+  // Handle successful session fetch
+  useEffect(() => {
+    if (sessionQuery.data) {
+      setSession(sessionQuery.data)
+    }
+  }, [sessionQuery.data, setSession])
 
   const loginMutation = usePostAllauthClientV1AuthLogin({
     mutation: {
@@ -38,9 +43,6 @@ export const useAuth = () => {
         setSession(data)
         toast.success('Welcome back!')
         navigate({ to: '/dashboard', replace: true })
-      },
-      onError: () => {
-        toast.error('Login failed')
       },
     },
   })
@@ -54,9 +56,6 @@ export const useAuth = () => {
           queryKey: getGetAllauthClientV1AuthSessionQueryKey('browser'),
         })
         navigate({ to: '/login', replace: true })
-      },
-      onError: () => {
-        toast.error('Logout failed')
       },
     },
   })

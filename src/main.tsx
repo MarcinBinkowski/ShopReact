@@ -7,7 +7,7 @@ import './styles.css'
 
 import { routeTree } from './routeTree.gen'
 import { authClient } from './api/auth-mutator'
-import type { RouterContext } from './types/router'
+import { RouterContext } from './types/router'
 import reportWebVitals from './reportWebVitals'
 
 const queryClient = new QueryClient({

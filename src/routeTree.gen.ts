@@ -13,7 +13,12 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedCatalogProductsRouteImport } from './routes/_authenticated/catalog/products'
+import { Route as AuthenticatedCatalogTagsIndexRouteImport } from './routes/_authenticated/catalog/tags/index'
+import { Route as AuthenticatedCatalogProductsIndexRouteImport } from './routes/_authenticated/catalog/products/index'
+import { Route as AuthenticatedCatalogTagsNewRouteImport } from './routes/_authenticated/catalog/tags/new'
+import { Route as AuthenticatedCatalogProductsNewRouteImport } from './routes/_authenticated/catalog/products/new'
+import { Route as AuthenticatedCatalogTagsTagIdEditRouteImport } from './routes/_authenticated/catalog/tags/$tagId/edit'
+import { Route as AuthenticatedCatalogProductsProductIdEditRouteImport } from './routes/_authenticated/catalog/products/$productId/edit'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -34,10 +39,40 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedCatalogProductsRoute =
-  AuthenticatedCatalogProductsRouteImport.update({
-    id: '/catalog/products',
-    path: '/catalog/products',
+const AuthenticatedCatalogTagsIndexRoute =
+  AuthenticatedCatalogTagsIndexRouteImport.update({
+    id: '/catalog/tags/',
+    path: '/catalog/tags/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCatalogProductsIndexRoute =
+  AuthenticatedCatalogProductsIndexRouteImport.update({
+    id: '/catalog/products/',
+    path: '/catalog/products/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCatalogTagsNewRoute =
+  AuthenticatedCatalogTagsNewRouteImport.update({
+    id: '/catalog/tags/new',
+    path: '/catalog/tags/new',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCatalogProductsNewRoute =
+  AuthenticatedCatalogProductsNewRouteImport.update({
+    id: '/catalog/products/new',
+    path: '/catalog/products/new',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCatalogTagsTagIdEditRoute =
+  AuthenticatedCatalogTagsTagIdEditRouteImport.update({
+    id: '/catalog/tags/$tagId/edit',
+    path: '/catalog/tags/$tagId/edit',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCatalogProductsProductIdEditRoute =
+  AuthenticatedCatalogProductsProductIdEditRouteImport.update({
+    id: '/catalog/products/$productId/edit',
+    path: '/catalog/products/$productId/edit',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 
@@ -45,13 +80,23 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/catalog/products': typeof AuthenticatedCatalogProductsRoute
+  '/catalog/products/new': typeof AuthenticatedCatalogProductsNewRoute
+  '/catalog/tags/new': typeof AuthenticatedCatalogTagsNewRoute
+  '/catalog/products': typeof AuthenticatedCatalogProductsIndexRoute
+  '/catalog/tags': typeof AuthenticatedCatalogTagsIndexRoute
+  '/catalog/products/$productId/edit': typeof AuthenticatedCatalogProductsProductIdEditRoute
+  '/catalog/tags/$tagId/edit': typeof AuthenticatedCatalogTagsTagIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/catalog/products': typeof AuthenticatedCatalogProductsRoute
+  '/catalog/products/new': typeof AuthenticatedCatalogProductsNewRoute
+  '/catalog/tags/new': typeof AuthenticatedCatalogTagsNewRoute
+  '/catalog/products': typeof AuthenticatedCatalogProductsIndexRoute
+  '/catalog/tags': typeof AuthenticatedCatalogTagsIndexRoute
+  '/catalog/products/$productId/edit': typeof AuthenticatedCatalogProductsProductIdEditRoute
+  '/catalog/tags/$tagId/edit': typeof AuthenticatedCatalogTagsTagIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -59,20 +104,48 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
-  '/_authenticated/catalog/products': typeof AuthenticatedCatalogProductsRoute
+  '/_authenticated/catalog/products/new': typeof AuthenticatedCatalogProductsNewRoute
+  '/_authenticated/catalog/tags/new': typeof AuthenticatedCatalogTagsNewRoute
+  '/_authenticated/catalog/products/': typeof AuthenticatedCatalogProductsIndexRoute
+  '/_authenticated/catalog/tags/': typeof AuthenticatedCatalogTagsIndexRoute
+  '/_authenticated/catalog/products/$productId/edit': typeof AuthenticatedCatalogProductsProductIdEditRoute
+  '/_authenticated/catalog/tags/$tagId/edit': typeof AuthenticatedCatalogTagsTagIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/dashboard' | '/catalog/products'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/dashboard'
+    | '/catalog/products/new'
+    | '/catalog/tags/new'
+    | '/catalog/products'
+    | '/catalog/tags'
+    | '/catalog/products/$productId/edit'
+    | '/catalog/tags/$tagId/edit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/dashboard' | '/catalog/products'
+  to:
+    | '/'
+    | '/login'
+    | '/dashboard'
+    | '/catalog/products/new'
+    | '/catalog/tags/new'
+    | '/catalog/products'
+    | '/catalog/tags'
+    | '/catalog/products/$productId/edit'
+    | '/catalog/tags/$tagId/edit'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/login'
     | '/_authenticated/dashboard'
-    | '/_authenticated/catalog/products'
+    | '/_authenticated/catalog/products/new'
+    | '/_authenticated/catalog/tags/new'
+    | '/_authenticated/catalog/products/'
+    | '/_authenticated/catalog/tags/'
+    | '/_authenticated/catalog/products/$productId/edit'
+    | '/_authenticated/catalog/tags/$tagId/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -111,11 +184,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/catalog/products': {
-      id: '/_authenticated/catalog/products'
+    '/_authenticated/catalog/tags/': {
+      id: '/_authenticated/catalog/tags/'
+      path: '/catalog/tags'
+      fullPath: '/catalog/tags'
+      preLoaderRoute: typeof AuthenticatedCatalogTagsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/catalog/products/': {
+      id: '/_authenticated/catalog/products/'
       path: '/catalog/products'
       fullPath: '/catalog/products'
-      preLoaderRoute: typeof AuthenticatedCatalogProductsRouteImport
+      preLoaderRoute: typeof AuthenticatedCatalogProductsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/catalog/tags/new': {
+      id: '/_authenticated/catalog/tags/new'
+      path: '/catalog/tags/new'
+      fullPath: '/catalog/tags/new'
+      preLoaderRoute: typeof AuthenticatedCatalogTagsNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/catalog/products/new': {
+      id: '/_authenticated/catalog/products/new'
+      path: '/catalog/products/new'
+      fullPath: '/catalog/products/new'
+      preLoaderRoute: typeof AuthenticatedCatalogProductsNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/catalog/tags/$tagId/edit': {
+      id: '/_authenticated/catalog/tags/$tagId/edit'
+      path: '/catalog/tags/$tagId/edit'
+      fullPath: '/catalog/tags/$tagId/edit'
+      preLoaderRoute: typeof AuthenticatedCatalogTagsTagIdEditRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/catalog/products/$productId/edit': {
+      id: '/_authenticated/catalog/products/$productId/edit'
+      path: '/catalog/products/$productId/edit'
+      fullPath: '/catalog/products/$productId/edit'
+      preLoaderRoute: typeof AuthenticatedCatalogProductsProductIdEditRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
   }
@@ -123,12 +231,25 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-  AuthenticatedCatalogProductsRoute: typeof AuthenticatedCatalogProductsRoute
+  AuthenticatedCatalogProductsNewRoute: typeof AuthenticatedCatalogProductsNewRoute
+  AuthenticatedCatalogTagsNewRoute: typeof AuthenticatedCatalogTagsNewRoute
+  AuthenticatedCatalogProductsIndexRoute: typeof AuthenticatedCatalogProductsIndexRoute
+  AuthenticatedCatalogTagsIndexRoute: typeof AuthenticatedCatalogTagsIndexRoute
+  AuthenticatedCatalogProductsProductIdEditRoute: typeof AuthenticatedCatalogProductsProductIdEditRoute
+  AuthenticatedCatalogTagsTagIdEditRoute: typeof AuthenticatedCatalogTagsTagIdEditRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
-  AuthenticatedCatalogProductsRoute: AuthenticatedCatalogProductsRoute,
+  AuthenticatedCatalogProductsNewRoute: AuthenticatedCatalogProductsNewRoute,
+  AuthenticatedCatalogTagsNewRoute: AuthenticatedCatalogTagsNewRoute,
+  AuthenticatedCatalogProductsIndexRoute:
+    AuthenticatedCatalogProductsIndexRoute,
+  AuthenticatedCatalogTagsIndexRoute: AuthenticatedCatalogTagsIndexRoute,
+  AuthenticatedCatalogProductsProductIdEditRoute:
+    AuthenticatedCatalogProductsProductIdEditRoute,
+  AuthenticatedCatalogTagsTagIdEditRoute:
+    AuthenticatedCatalogTagsTagIdEditRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
