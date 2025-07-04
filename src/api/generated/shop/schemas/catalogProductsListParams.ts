@@ -8,9 +8,14 @@
 import type { CatalogProductsListStatusItem } from './catalogProductsListStatusItem';
 
 export type CatalogProductsListParams = {
-category?: string;
+category?: number;
+/**
+ * Multiple values may be separated by commas.
+ */
+category__in?: number[];
 created_at__date__gte?: string;
 created_at__date__lte?: string;
+date_range?: string;
 in_stock?: boolean;
 is_visible?: boolean;
 max_price?: number;
@@ -25,6 +30,10 @@ ordering?: string;
  * A page number within the paginated result set.
  */
 page?: number;
+/**
+ * Number of results to return per page.
+ */
+page_size?: number;
 price?: number;
 price__gte?: number;
 price__lte?: number;

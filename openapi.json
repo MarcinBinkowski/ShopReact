@@ -20,6 +20,12 @@ paths:
         description: A page number within the paginated result set.
         schema:
           type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
       tags:
       - addresses
       security:
@@ -362,6 +368,12 @@ paths:
         description: A page number within the paginated result set.
         schema:
           type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
       - name: search
         required: false
         in: query
@@ -562,6 +574,12 @@ paths:
         description: A page number within the paginated result set.
         schema:
           type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
       - in: query
         name: product
         schema:
@@ -758,7 +776,16 @@ paths:
       - in: query
         name: category
         schema:
-          type: string
+          type: integer
+      - in: query
+        name: category__in
+        schema:
+          type: array
+          items:
+            type: integer
+        description: Multiple values may be separated by commas.
+        explode: false
+        style: form
       - in: query
         name: created_at__date__gte
         schema:
@@ -769,6 +796,10 @@ paths:
         schema:
           type: string
           format: date
+      - in: query
+        name: date_range
+        schema:
+          type: string
       - in: query
         name: in_stock
         schema:
@@ -803,6 +834,12 @@ paths:
         required: false
         in: query
         description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
         schema:
           type: integer
       - in: query
@@ -1107,6 +1144,12 @@ paths:
         required: false
         in: query
         description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
         schema:
           type: integer
       - name: search

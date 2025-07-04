@@ -16,6 +16,7 @@ import {
 export const catalogCategoriesListQueryParams = zod.object({
   "ordering": zod.coerce.string().optional().describe('Which field to use when ordering the results.'),
   "page": zod.coerce.number().optional().describe('A page number within the paginated result set.'),
+  "page_size": zod.coerce.number().optional().describe('Number of results to return per page.'),
   "search": zod.coerce.string().optional().describe('A search term.')
 })
 
@@ -193,6 +194,7 @@ export const catalogImagesListQueryParams = zod.object({
   "is_primary": zod.coerce.boolean().optional(),
   "ordering": zod.coerce.string().optional().describe('Which field to use when ordering the results.'),
   "page": zod.coerce.number().optional().describe('A page number within the paginated result set.'),
+  "page_size": zod.coerce.number().optional().describe('Number of results to return per page.'),
   "product": zod.coerce.number().optional()
 })
 
@@ -375,9 +377,11 @@ export const catalogImagesSetPrimaryCreateResponse = zod.object({
  * ViewSet for Product model with advanced CRUD operations.
  */
 export const catalogProductsListQueryParams = zod.object({
-  "category": zod.coerce.string().optional(),
+  "category": zod.coerce.number().optional(),
+  "category__in": zod.array(zod.coerce.number()).optional().describe('Multiple values may be separated by commas.'),
   "created_at__date__gte": zod.coerce.string().date().optional(),
   "created_at__date__lte": zod.coerce.string().date().optional(),
+  "date_range": zod.coerce.string().optional(),
   "in_stock": zod.coerce.boolean().optional(),
   "is_visible": zod.coerce.boolean().optional(),
   "max_price": zod.coerce.number().optional(),
@@ -386,6 +390,7 @@ export const catalogProductsListQueryParams = zod.object({
   "on_sale": zod.coerce.boolean().optional(),
   "ordering": zod.coerce.string().optional().describe('Which field to use when ordering the results.'),
   "page": zod.coerce.number().optional().describe('A page number within the paginated result set.'),
+  "page_size": zod.coerce.number().optional().describe('Number of results to return per page.'),
   "price": zod.coerce.number().optional(),
   "price__gte": zod.coerce.number().optional(),
   "price__lte": zod.coerce.number().optional(),
@@ -1081,6 +1086,7 @@ export const catalogProductsOnSaleRetrieveResponse = zod.object({
 export const catalogTagsListQueryParams = zod.object({
   "ordering": zod.coerce.string().optional().describe('Which field to use when ordering the results.'),
   "page": zod.coerce.number().optional().describe('A page number within the paginated result set.'),
+  "page_size": zod.coerce.number().optional().describe('Number of results to return per page.'),
   "search": zod.coerce.string().optional().describe('A search term.')
 })
 

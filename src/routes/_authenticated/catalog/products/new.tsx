@@ -1,32 +1,38 @@
 "use client"
 
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router"
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft } from "lucide-react"
-import ProductForm, { type ProductFormData } from "@/components/products/ProductForm"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { useCatalogProductsCreate } from "@/api/generated/shop/catalog/catalog"
+import { catalogProductsCreateBody } from "@/api/generated/shop/catalog/catalog.zod"
+import { ProductForm } from "@/components/products/ProductForm"
+import { toast } from "sonner"
+import { useQueryClient } from "@tanstack/react-query"
+import { z } from "zod"
+
+// Use the generated Zod schema types
+type ProductFormData = z.infer<typeof catalogProductsCreateBody>
 
 function NewProductPage() {
   const navigate = useNavigate()
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
+  const createMutation = useCatalogProductsCreate()
+  const queryClient = useQueryClient()
 
   const handleSubmit = async (formData: ProductFormData) => {
-    setLoading(true)
-    setError("")
-
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      console.log("Product data:", formData)
-
-      // Redirect back to products page
+      // Validate the form data using Zod schema
+      const validatedData = catalogProductsCreateBody.parse(formData)
+      
+      await createMutation.mutateAsync({ data: validatedData })
+      
+      queryClient.invalidateQueries({ queryKey: ["/api/catalog/products/"] })
+      
+      toast.success("Product created successfully")
       navigate({ to: "/catalog/products" })
-    } catch (err) {
-      setError("Failed to create product")
-    } finally {
-      setLoading(false)
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(`Failed to create product: ${error.message}`)
+      } else {
+        toast.error("Failed to create product")
+      }
     }
   }
 
@@ -35,25 +41,17 @@ function NewProductPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center space-x-4">
-        <Link to="/catalog/products">
-          <Button variant="ghost" size="sm">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Products
-          </Button>
-        </Link>
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Add New Product</h1>
-          <p className="text-gray-600">Create a new product for your store</p>
-        </div>
-      </div>
-
-      <ProductForm onSubmit={handleSubmit} onCancel={handleCancel} loading={loading} error={error} />
-    </div>
+    <ProductForm
+      title="Create New Product"
+      description="Add a new product to your catalog"
+      onSubmit={handleSubmit}
+      submitButtonText="Create Product"
+      isSubmitting={createMutation.isPending}
+      onCancel={handleCancel}
+    />
   )
 }
 
-export const Route = createFileRoute("/_authenticated/catalog/products/new")({
+export const Route = createFileRoute('/_authenticated/catalog/products/new')({
   component: NewProductPage,
 })

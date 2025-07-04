@@ -1447,7 +1447,8 @@ const {mutation: mutationOptions} = options ?
         {id: number},
         TContext
       > => {
-        const mutationOptions = getCatalogProductsDestroyMutationOptions(options);
+
+      const mutationOptions = getCatalogProductsDestroyMutationOptions(options);
 
       return useMutation(mutationOptions , queryClient);
     }

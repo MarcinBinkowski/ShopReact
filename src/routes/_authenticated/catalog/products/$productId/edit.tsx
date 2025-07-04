@@ -1,32 +1,47 @@
 "use client"
 
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router"
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft } from "lucide-react"
-import ProductForm, { type ProductFormData } from "@/components/products/ProductForm"
+import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router"
+import { useCatalogProductsRetrieve, useCatalogProductsPartialUpdate } from "@/api/generated/shop/catalog/catalog"
+import { catalogProductsPartialUpdateBody } from "@/api/generated/shop/catalog/catalog.zod"
+import { ProductForm } from "@/components/products/ProductForm"
+import { toast } from "sonner"
+import { useQueryClient } from "@tanstack/react-query"
+import { z } from "zod"
+import { Spinner } from "@/components/customui/spinner"
 
-function NewProductPage() {
+// Use the generated Zod schema types
+type ProductFormData = z.infer<typeof catalogProductsPartialUpdateBody>
+
+function EditProductPage() {
   const navigate = useNavigate()
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
+  const { productId } = useParams({ from: "/_authenticated/catalog/products/$productId/edit" })
+  const updateMutation = useCatalogProductsPartialUpdate()
+  const queryClient = useQueryClient()
+
+  // Fetch product data
+  const { data: product, isLoading, error } = useCatalogProductsRetrieve(parseInt(productId))
 
   const handleSubmit = async (formData: ProductFormData) => {
-    setLoading(true)
-    setError("")
-
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      console.log("Product data:", formData)
-
-      // Redirect back to products page
+      // Validate the form data using Zod schema
+      const validatedData = catalogProductsPartialUpdateBody.parse(formData)
+      
+      await updateMutation.mutateAsync({ 
+        id: parseInt(productId), 
+        data: validatedData 
+      })
+      
+      queryClient.invalidateQueries({ queryKey: ["/api/catalog/products/"] })
+      queryClient.invalidateQueries({ queryKey: [`/api/catalog/products/${productId}/`] })
+      
+      toast.success("Product updated successfully")
       navigate({ to: "/catalog/products" })
-    } catch (err) {
-      setError("Failed to create product")
-    } finally {
-      setLoading(false)
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(`Failed to update product: ${error.message}`)
+      } else {
+        toast.error("Failed to update product")
+      }
     }
   }
 
@@ -34,26 +49,45 @@ function NewProductPage() {
     navigate({ to: "/catalog/products" })
   }
 
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center space-x-4">
-        <Link to="/catalog/products">
-          <Button variant="outline">
-            <ArrowLeft className="mr-2 h-4 w-4" />
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Spinner size="lg" />
+      </div>
+    )
+  }
+
+  if (error || !product) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-gray-900">Product not found</h2>
+          <p className="text-gray-600 mt-2">The product you're looking for doesn't exist.</p>
+          <button
+            onClick={() => navigate({ to: "/catalog/products" })}
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          >
             Back to Products
-          </Button>
-        </Link>
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Add New Product</h1>
-          <p className="text-gray-600">Create a new product for your store</p>
+          </button>
         </div>
       </div>
+    )
+  }
 
-      <ProductForm onSubmit={handleSubmit} onCancel={handleCancel} loading={loading} error={error} />
-    </div>
+  return (
+    <ProductForm
+      title="Edit Product"
+      description="Update product information and images"
+      initialData={product}
+      onSubmit={handleSubmit}
+      submitButtonText="Update Product"
+      isSubmitting={updateMutation.isPending}
+      onCancel={handleCancel}
+
+    />
   )
 }
 
 export const Route = createFileRoute("/_authenticated/catalog/products/$productId/edit")({
-  component: NewProductPage,
+  component: EditProductPage,
 })

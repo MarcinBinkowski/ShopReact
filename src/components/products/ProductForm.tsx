@@ -1,19 +1,16 @@
 "use client"
 
-import type React from "react"
-
-import { useState, useEffect } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { FormField } from "@/components/customui/form-field"
+import { FormSelect } from "@/components/customui/form-select"
+import { Spinner } from "@/components/customui/spinner"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useEffect, useState } from "react"
+import type { ProductDetail } from '@/api/generated/shop/schemas'
+
+import { toast } from "sonner"
 import {
   Select,
   SelectContent,
@@ -22,326 +19,345 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Upload, Loader2 } from "lucide-react"
-
-export interface ProductFormData {
-  name: string
-  description: string
-  category: string
-  brand: string
-  price: string
-  stock: string
-  sku: string
-  isActive: boolean
-}
+import { Badge } from "@/components/ui/badge"
+import { 
+  useCatalogCategoriesList,
+  useCatalogTagsList
+} from "@/api/generated/shop/catalog/catalog"
+import { 
+  catalogProductsCreateBody, 
+  catalogProductsPartialUpdateBody 
+} from "@/api/generated/shop/catalog/catalog.zod"
+import AsyncSelect from "react-select/async"
+import { SingleValue, MultiValue } from "react-select"
+import { AsyncPaginate, LoadOptions } from 'react-select-async-paginate';
+import { catalogCategoriesList, catalogTagsList } from "@/api/generated/shop/catalog/catalog";
+import { AsyncPaginateSelect, OptionType } from "@/components/customui/AsyncPaginateSelect";
 
 interface ProductFormProps {
-  initialData?: Partial<ProductFormData>
-  productId?: string
-  onSubmit: (data: ProductFormData) => Promise<void>
+  title: string
+  description: string
+  initialData?: Partial<ProductDetail>
+  onSubmit: (data: any) => Promise<void>
+  submitButtonText: string
+  isSubmitting?: boolean
   onCancel: () => void
-  loading?: boolean
-  error?: string
 }
 
-const defaultFormData: ProductFormData = {
-  name: "",
-  description: "",
-  category: "",
-  brand: "",
-  price: "",
-  stock: "",
-  sku: "",
-  isActive: true,
-}
-
-export default function ProductForm({
-  initialData,
-  productId,
-  onSubmit,
-  onCancel,
-  loading = false,
-  error,
-}: ProductFormProps) {
-  const [formData, setFormData] = useState<ProductFormData>(defaultFormData)
-
-  // Determine edit mode based on presence of initialData
-  const isEdit = Boolean(initialData)
-
-  // Initialize form data
+// Debounce hook
+function useDebounce<T>(value: T, delay: number): T {
+  const [debounced, setDebounced] = useState(value)
   useEffect(() => {
-    if (initialData) {
-      setFormData({ ...defaultFormData, ...initialData })
+    const handler = setTimeout(() => setDebounced(value), delay)
+    return () => clearTimeout(handler)
+  }, [value, delay])
+  return debounced
+}
+
+export function ProductForm({
+  title,
+  description,
+  initialData,
+  onSubmit,
+  submitButtonText,
+  isSubmitting: externalIsSubmitting,
+  onCancel
+}: ProductFormProps) {
+  // Use the correct schema based on whether we're editing or creating
+  const schema = initialData?.id ? catalogProductsPartialUpdateBody : catalogProductsCreateBody
+  
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting: hookIsSubmitting },
+    reset,
+    setValue,
+    watch
+  } = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      status: 'draft',
+      is_visible: true,
+      tag_ids: []
     }
-  }, [initialData])
+  })
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    await onSubmit(formData)
+  const isSubmitting = externalIsSubmitting ?? hookIsSubmitting
+
+  // Fetch categories and tags
+  const { data: categoriesData } = useCatalogCategoriesList(undefined)
+  const { data: tagsData } = useCatalogTagsList(undefined)
+
+  // Initialize form with initialData
+  useEffect(() => {
+    if (initialData && categoriesData?.results) {
+      const categoryId = initialData.category?.id
+      const tagIds = initialData.tags?.map(tag => tag.id) || []
+      
+      reset({
+        name: initialData.name || '',
+        slug: initialData.slug || '',
+        description: initialData.description || '',
+        short_description: initialData.short_description || '',
+        price: initialData.price || '',
+        original_price: initialData.original_price || '',
+        sku: initialData.sku || '',
+        stock_quantity: initialData.stock_quantity || 0,
+        category_id: categoryId || undefined,
+        tag_ids: tagIds,
+        status: initialData.status || 'draft',
+        is_visible: initialData.is_visible ?? true,
+        sale_start: initialData.sale_start || null,
+        sale_end: initialData.sale_end || null
+      })
+    }
+  }, [initialData, reset, categoriesData?.results])
+
+  const handleFormSubmit = async (data: any) => {
+    try {
+      await onSubmit(data)
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(`Form submission failed: ${error.message}`)
+      } else {
+        toast.error("An unexpected error occurred")
+      }
+    }
   }
 
-  const handleInputChange = (
-    field: keyof ProductFormData,
-    value: string | boolean
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }))
-  }
+  const { data: defaultCategories } = useCatalogCategoriesList({ search: '', page: 1 });
+  const defaultCategoryOptions = defaultCategories?.results?.map(cat => ({ value: cat.id, label: cat.name })) || [];
+  const { data: defaultTags } = useCatalogTagsList({ search: '', page: 1 });
+  const defaultTagOptions = defaultTags?.results?.map(tag => ({ value: tag.id, label: tag.name })) || [];
 
   return (
-    <div className="space-y-6">
-      {error && (
-        <Alert variant="destructive">
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Product Info */}
-          <div className="lg:col-span-2 space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Product Information</CardTitle>
-                <CardDescription>
-                  Basic details about your product
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
+    <form onSubmit={handleSubmit(handleFormSubmit)}>
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Left/Main Column */}
+        <div className="flex-1 space-y-6">
+          {/* Product Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Product Information</CardTitle>
+              <p className="text-sm text-muted-foreground">Basic details about your product</p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <FormField
+                label="Product Name"
+                id="name"
+                placeholder="Enter product name"
+                register={register('name')}
+                error={errors.name}
+                disabled={isSubmitting}
+                required
+              />
+              <FormField
+                label="Description"
+                id="description"
+                placeholder="Enter product description"
+                register={register('description')}
+                error={errors.description}
+                disabled={isSubmitting}
+                required
+                multiline
+                rows={4}
+              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="name">Product Name</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) =>
-                      handleInputChange("name", e.target.value)
-                    }
-                    placeholder="Enter product name"
-                    required
+                  <label htmlFor="category_id" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Category
+                  </label>
+                  <AsyncPaginateSelect
+                    value={(() => {
+                      const id = watch("category_id")
+                      if (!id) return null
+                      const cat = categoriesData?.results?.find((c: any) => c.id === id)
+                      return cat ? { value: cat.id, label: cat.name } : null
+                    })()}
+                    onChange={(option: SingleValue<OptionType>) => setValue("category_id", option ? option.value : undefined)}
+                    isDisabled={isSubmitting}
+                    error={errors.category_id && String(errors.category_id.message)}
+                    placeholder="Select category"
+                    isMulti={false}
+                    fetcher={catalogCategoriesList}
+                    mapOption={cat => ({ value: cat.id, label: cat.name })}
+                    defaultOptions={defaultCategoryOptions}
+                    instanceId="category-async-paginate"
                   />
                 </div>
+                {/* Brand omitted as not in API */}
+              </div>
+              {/* Tags Field */}
+              <div className="mt-4">
+                <label htmlFor="tag_ids" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  Tags
+                </label>
+                <AsyncPaginateSelect
+                  value={(() => {
+                    const ids = watch("tag_ids")
+                    if (!Array.isArray(ids)) return []
+                    return ids.map((id: number) => {
+                      const tag = tagsData?.results?.find((t: any) => t.id === id)
+                      return tag ? { value: tag.id, label: tag.name } : { value: id, label: `Tag #${id}` }
+                    })
+                  })()}
+                  onChange={(options: MultiValue<OptionType>) => setValue("tag_ids", Array.isArray(options) ? options.map(o => o.value) : [])}
+                  isDisabled={isSubmitting}
+                  error={errors.tag_ids && String(errors.tag_ids.message)}
+                  placeholder="Add tags..."
+                  isMulti
+                  fetcher={catalogTagsList}
+                  mapOption={tag => ({ value: tag.id, label: tag.name })}
+                  defaultOptions={defaultTagOptions}
+                  instanceId="tags-async-paginate"
+                />
+              </div>
+            </CardContent>
+          </Card>
 
+          {/* Sale & Price */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Sale & Price</CardTitle>
+              <p className="text-sm text-muted-foreground">Set the current sale price and schedule</p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <FormField
+                  label="Price ($)"
+                  id="price"
+                  placeholder="0.00"
+                  register={register('price')}
+                  error={errors.price}
+                  disabled={isSubmitting}
+                  required
+                />
                 <div>
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) =>
-                      handleInputChange("description", e.target.value)
-                    }
-                    placeholder="Enter product description"
-                    rows={4}
+                  <label htmlFor="sale_start" className="text-sm font-medium leading-none">Sale Start</label>
+                  <input
+                    id="sale_start"
+                    type="datetime-local"
+                    {...register('sale_start')}
+                    className="block w-full border rounded-md px-3 py-2 mt-1"
+                    disabled={isSubmitting}
                   />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Select
-                      value={formData.category}
-                      onValueChange={(value) =>
-                        handleInputChange("category", value)
-                      }
-                    >
-
-                      <SelectContent>
-                        <SelectItem value="shoes">Shoes</SelectItem>
-                        <SelectItem value="clothing">Clothing</SelectItem>
-                        <SelectItem value="equipment">
-                          Equipment
-                        </SelectItem>
-                        <SelectItem value="accessories">
-                          Accessories
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="brand">Brand</Label>
-                    <Select
-                      value={formData.brand}
-                      onValueChange={(value) =>
-                        handleInputChange("brand", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select brand" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="nike">Nike</SelectItem>
-                        <SelectItem value="adidas">Adidas</SelectItem>
-                        <SelectItem value="puma">Puma</SelectItem>
-                        <SelectItem value="under-armour">
-                          Under Armour
-                        </SelectItem>
-                        <SelectItem value="wilson">Wilson</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Pricing & Inventory</CardTitle>
-                <CardDescription>
-                  Set pricing and stock information
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <Label htmlFor="price">Price ($)</Label>
-                    <Input
-                      id="price"
-                      type="number"
-                      step="0.01"
-                      value={formData.price}
-                      onChange={(e) =>
-                        handleInputChange("price", e.target.value)
-                      }
-                      placeholder="0.00"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="stock">Stock Quantity</Label>
-                    <Input
-                      id="stock"
-                      type="number"
-                      value={formData.stock}
-                      onChange={(e) =>
-                        handleInputChange("stock", e.target.value)
-                      }
-                      placeholder="0"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="sku">SKU</Label>
-                    <Input
-                      id="sku"
-                      value={formData.sku}
-                      onChange={(e) =>
-                        handleInputChange("sku", e.target.value)
-                      }
-                      placeholder="Enter SKU"
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Product Status</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="active"
-                    checked={formData.isActive}
-                    onCheckedChange={(checked) =>
-                      handleInputChange("isActive", checked)
-                    }
-                  />
-                  <Label htmlFor="active">Active Product</Label>
-                </div>
-                <p className="text-sm text-gray-600 mt-2">
-                  Inactive products won't be visible to customers
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Product Images</CardTitle>
-                <CardDescription>Upload product images</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {/* Current Images - only show in edit mode */}
-                  {isEdit && (
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="relative">
-                        <img
-                          src="/placeholder.svg?height=100&width=100"
-                          alt="Product"
-                          className="w-full h-24 object-cover rounded-md border"
-                        />
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="sm"
-                          className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0"
-                        >
-                          ×
-                        </Button>
-                      </div>
-                    </div>
+                  {errors.sale_start && (
+                    <p className="text-sm text-red-500">{String(errors.sale_start.message)}</p>
                   )}
-
-                  {/* Upload Images */}
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                    <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                    <div className="mt-4">
-                      <Button variant="outline" type="button">
-                        {isEdit ? "Upload More Images" : "Upload Images"}
-                      </Button>
-                      <p className="text-sm text-gray-600 mt-2">
-                        PNG, JPG, GIF up to 10MB
-                      </p>
-                    </div>
-                  </div>
                 </div>
-              </CardContent>
-            </Card>
+                <div>
+                  <label htmlFor="sale_end" className="text-sm font-medium leading-none">Sale End</label>
+                  <input
+                    id="sale_end"
+                    type="datetime-local"
+                    {...register('sale_end')}
+                    className="block w-full border rounded-md px-3 py-2 mt-1"
+                    disabled={isSubmitting}
+                  />
+                  {errors.sale_end && (
+                    <p className="text-sm text-red-500">{String(errors.sale_end.message)}</p>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* Product ID - only show in edit mode */}
-            {isEdit && productId && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Product ID</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-gray-600">ID: {productId}</p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    This ID cannot be changed
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+          {/* Pricing & Inventory */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Pricing & Inventory</CardTitle>
+              <p className="text-sm text-muted-foreground">Set original price and stock information</p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <FormField
+                  label="Original Price"
+                  id="original_price"
+                  placeholder="0.00"
+                  register={register('original_price')}
+                  error={errors.original_price}
+                  disabled={isSubmitting}
+                />
+                <FormField
+                  label="Stock Quantity"
+                  id="stock_quantity"
+                  placeholder="0"
+                  register={register('stock_quantity', { valueAsNumber: true })}
+                  error={errors.stock_quantity}
+                  disabled={isSubmitting}
+                  type="number"
+                />
+                <FormField
+                  label="SKU"
+                  id="sku"
+                  placeholder="Enter SKU"
+                  register={register('sku')}
+                  error={errors.sku}
+                  disabled={isSubmitting}
+                  required
+                />
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Form Actions */}
-        <div className="flex justify-end space-x-4">
-          <Button variant="outline" type="button" onClick={onCancel}>
-            Cancel
-          </Button>
-          <Button type="submit" disabled={loading}>
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {isEdit ? "Updating..." : "Creating..."}
-              </>
-            ) : isEdit ? (
-              "Update Product"
-            ) : (
-              "Create Product"
-            )}
-          </Button>
+        {/* Right/Sidebar Column */}
+        <div className="flex flex-col gap-6 w-full lg:w-[340px] xl:w-[400px]">
+          {/* Product Status */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Product Status</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-4">
+                <Switch
+                  checked={watch('is_visible')}
+                  onCheckedChange={value => setValue('is_visible', value)}
+                  disabled={isSubmitting}
+                  id="is_visible"
+                />
+                <span className="font-medium">Active Product</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Inactive products won't be visible to customers
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Product Images */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Product Images</CardTitle>
+              <p className="text-sm text-muted-foreground">Upload product images</p>
+            </CardHeader>
+            <CardContent>
+              <div className="border-2 border-dashed rounded-md flex flex-col items-center justify-center py-8 px-4 text-center text-muted-foreground">
+                <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto mb-2" width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 16v-4m0 0V8m0 4h4m-4 0H8m12 4v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4" /></svg>
+                <Button type="button" variant="outline" disabled>Upload Images</Button>
+                <div className="text-xs mt-2">PNG, JPG, GIF up to 10MB</div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      </form>
-    </div>
+      </div>
+      {/* Action Buttons */}
+      <div className="flex justify-end gap-2 mt-8">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onCancel}
+          disabled={isSubmitting}
+        >
+          Cancel
+        </Button>
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+        >
+          {isSubmitting && <Spinner className="mr-2 h-4 w-4" />}
+          {submitButtonText}
+        </Button>
+      </div>
+    </form>
   )
-}
+} 

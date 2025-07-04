@@ -18,7 +18,8 @@ export const addressesListParams = zod.object({
 })
 
 export const addressesListQueryParams = zod.object({
-  "page": zod.coerce.number().optional().describe('A page number within the paginated result set.')
+  "page": zod.coerce.number().optional().describe('A page number within the paginated result set.'),
+  "page_size": zod.coerce.number().optional().describe('Number of results to return per page.')
 })
 
 export const addressesListResponseResultsItemLabelMax = 50;
