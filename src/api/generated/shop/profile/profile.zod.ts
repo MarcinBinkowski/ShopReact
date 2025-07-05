@@ -19,6 +19,8 @@ export const profileAddressesListQueryParams = zod.object({
   "page_size": zod.coerce.number().optional().describe('Number of results to return per page.')
 })
 
+export const profileAddressesListResponseResultsItemProfileFirstNameMax = 150;
+export const profileAddressesListResponseResultsItemProfileLastNameMax = 150;
 export const profileAddressesListResponseResultsItemLabelMax = 50;
 
 
@@ -28,6 +30,13 @@ export const profileAddressesListResponse = zod.object({
   "previous": zod.string().url().nullish(),
   "results": zod.array(zod.object({
   "id": zod.number(),
+  "profile": zod.object({
+  "id": zod.number(),
+  "user_email": zod.string(),
+  "display_name": zod.string(),
+  "first_name": zod.string().max(profileAddressesListResponseResultsItemProfileFirstNameMax).optional().describe('User\'s first name'),
+  "last_name": zod.string().max(profileAddressesListResponseResultsItemProfileLastNameMax).optional().describe('User\'s last name')
+}).describe('Minimal profile serializer for address responses.'),
   "address_type": zod.enum(['shipping', 'billing']).describe('* `shipping` - Shipping\n* `billing` - Billing').describe('Type of address (shipping or billing)\n\n* `shipping` - Shipping\n* `billing` - Billing'),
   "address_type_display": zod.string(),
   "full_address": zod.string(),
@@ -37,6 +46,9 @@ export const profileAddressesListResponse = zod.object({
 }))
 })
 
+/**
+ * Create a new address. Profile field is optional - if not provided, uses current user's profile.
+ */
 export const profileAddressesCreateParams = zod.object({
   "id": zod.coerce.number()
 })
@@ -48,6 +60,7 @@ export const profileAddressesCreateBodyLabelMax = 50;
 
 
 export const profileAddressesCreateBody = zod.object({
+  "profile": zod.number().optional().describe('Profile ID to assign this address to. If not provided, uses current user\'s profile.'),
   "address": zod.string().max(profileAddressesCreateBodyAddressMax).describe('Street address, apartment, unit, etc.'),
   "city": zod.string().max(profileAddressesCreateBodyCityMax).describe('City name'),
   "postal_code": zod.string().max(profileAddressesCreateBodyPostalCodeMax).describe('ZIP code or postal code'),
@@ -61,6 +74,8 @@ export const profileAddressesRetrieveParams = zod.object({
   "id": zod.coerce.number()
 })
 
+export const profileAddressesRetrieveResponseProfileFirstNameMax = 150;
+export const profileAddressesRetrieveResponseProfileLastNameMax = 150;
 export const profileAddressesRetrieveResponseAddressMax = 255;
 export const profileAddressesRetrieveResponseCityMax = 100;
 export const profileAddressesRetrieveResponsePostalCodeMax = 20;
@@ -69,6 +84,13 @@ export const profileAddressesRetrieveResponseLabelMax = 50;
 
 export const profileAddressesRetrieveResponse = zod.object({
   "id": zod.number(),
+  "profile": zod.object({
+  "id": zod.number(),
+  "user_email": zod.string(),
+  "display_name": zod.string(),
+  "first_name": zod.string().max(profileAddressesRetrieveResponseProfileFirstNameMax).optional().describe('User\'s first name'),
+  "last_name": zod.string().max(profileAddressesRetrieveResponseProfileLastNameMax).optional().describe('User\'s last name')
+}).describe('Minimal profile serializer for address responses.'),
   "address": zod.string().max(profileAddressesRetrieveResponseAddressMax).describe('Street address, apartment, unit, etc.'),
   "city": zod.string().max(profileAddressesRetrieveResponseCityMax).describe('City name'),
   "postal_code": zod.string().max(profileAddressesRetrieveResponsePostalCodeMax).describe('ZIP code or postal code'),
@@ -176,6 +198,8 @@ export const profileAddressesSetDefaultPartialUpdateBody = zod.object({
   "label": zod.string().max(profileAddressesSetDefaultPartialUpdateBodyLabelMax).optional().describe('Optional label like \'Home\', \'Office\', etc.')
 })
 
+export const profileAddressesSetDefaultPartialUpdateResponseProfileFirstNameMax = 150;
+export const profileAddressesSetDefaultPartialUpdateResponseProfileLastNameMax = 150;
 export const profileAddressesSetDefaultPartialUpdateResponseAddressMax = 255;
 export const profileAddressesSetDefaultPartialUpdateResponseCityMax = 100;
 export const profileAddressesSetDefaultPartialUpdateResponsePostalCodeMax = 20;
@@ -184,6 +208,13 @@ export const profileAddressesSetDefaultPartialUpdateResponseLabelMax = 50;
 
 export const profileAddressesSetDefaultPartialUpdateResponse = zod.object({
   "id": zod.number(),
+  "profile": zod.object({
+  "id": zod.number(),
+  "user_email": zod.string(),
+  "display_name": zod.string(),
+  "first_name": zod.string().max(profileAddressesSetDefaultPartialUpdateResponseProfileFirstNameMax).optional().describe('User\'s first name'),
+  "last_name": zod.string().max(profileAddressesSetDefaultPartialUpdateResponseProfileLastNameMax).optional().describe('User\'s last name')
+}).describe('Minimal profile serializer for address responses.'),
   "address": zod.string().max(profileAddressesSetDefaultPartialUpdateResponseAddressMax).describe('Street address, apartment, unit, etc.'),
   "city": zod.string().max(profileAddressesSetDefaultPartialUpdateResponseCityMax).describe('City name'),
   "postal_code": zod.string().max(profileAddressesSetDefaultPartialUpdateResponsePostalCodeMax).describe('ZIP code or postal code'),
@@ -203,6 +234,8 @@ export const profileAddressesBillingRetrieveParams = zod.object({
   "id": zod.coerce.number()
 })
 
+export const profileAddressesBillingRetrieveResponseProfileFirstNameMax = 150;
+export const profileAddressesBillingRetrieveResponseProfileLastNameMax = 150;
 export const profileAddressesBillingRetrieveResponseAddressMax = 255;
 export const profileAddressesBillingRetrieveResponseCityMax = 100;
 export const profileAddressesBillingRetrieveResponsePostalCodeMax = 20;
@@ -211,6 +244,13 @@ export const profileAddressesBillingRetrieveResponseLabelMax = 50;
 
 export const profileAddressesBillingRetrieveResponse = zod.object({
   "id": zod.number(),
+  "profile": zod.object({
+  "id": zod.number(),
+  "user_email": zod.string(),
+  "display_name": zod.string(),
+  "first_name": zod.string().max(profileAddressesBillingRetrieveResponseProfileFirstNameMax).optional().describe('User\'s first name'),
+  "last_name": zod.string().max(profileAddressesBillingRetrieveResponseProfileLastNameMax).optional().describe('User\'s last name')
+}).describe('Minimal profile serializer for address responses.'),
   "address": zod.string().max(profileAddressesBillingRetrieveResponseAddressMax).describe('Street address, apartment, unit, etc.'),
   "city": zod.string().max(profileAddressesBillingRetrieveResponseCityMax).describe('City name'),
   "postal_code": zod.string().max(profileAddressesBillingRetrieveResponsePostalCodeMax).describe('ZIP code or postal code'),
@@ -230,6 +270,8 @@ export const profileAddressesDefaultBillingRetrieveParams = zod.object({
   "id": zod.coerce.number()
 })
 
+export const profileAddressesDefaultBillingRetrieveResponseProfileFirstNameMax = 150;
+export const profileAddressesDefaultBillingRetrieveResponseProfileLastNameMax = 150;
 export const profileAddressesDefaultBillingRetrieveResponseAddressMax = 255;
 export const profileAddressesDefaultBillingRetrieveResponseCityMax = 100;
 export const profileAddressesDefaultBillingRetrieveResponsePostalCodeMax = 20;
@@ -238,6 +280,13 @@ export const profileAddressesDefaultBillingRetrieveResponseLabelMax = 50;
 
 export const profileAddressesDefaultBillingRetrieveResponse = zod.object({
   "id": zod.number(),
+  "profile": zod.object({
+  "id": zod.number(),
+  "user_email": zod.string(),
+  "display_name": zod.string(),
+  "first_name": zod.string().max(profileAddressesDefaultBillingRetrieveResponseProfileFirstNameMax).optional().describe('User\'s first name'),
+  "last_name": zod.string().max(profileAddressesDefaultBillingRetrieveResponseProfileLastNameMax).optional().describe('User\'s last name')
+}).describe('Minimal profile serializer for address responses.'),
   "address": zod.string().max(profileAddressesDefaultBillingRetrieveResponseAddressMax).describe('Street address, apartment, unit, etc.'),
   "city": zod.string().max(profileAddressesDefaultBillingRetrieveResponseCityMax).describe('City name'),
   "postal_code": zod.string().max(profileAddressesDefaultBillingRetrieveResponsePostalCodeMax).describe('ZIP code or postal code'),
@@ -257,6 +306,8 @@ export const profileAddressesDefaultShippingRetrieveParams = zod.object({
   "id": zod.coerce.number()
 })
 
+export const profileAddressesDefaultShippingRetrieveResponseProfileFirstNameMax = 150;
+export const profileAddressesDefaultShippingRetrieveResponseProfileLastNameMax = 150;
 export const profileAddressesDefaultShippingRetrieveResponseAddressMax = 255;
 export const profileAddressesDefaultShippingRetrieveResponseCityMax = 100;
 export const profileAddressesDefaultShippingRetrieveResponsePostalCodeMax = 20;
@@ -265,6 +316,13 @@ export const profileAddressesDefaultShippingRetrieveResponseLabelMax = 50;
 
 export const profileAddressesDefaultShippingRetrieveResponse = zod.object({
   "id": zod.number(),
+  "profile": zod.object({
+  "id": zod.number(),
+  "user_email": zod.string(),
+  "display_name": zod.string(),
+  "first_name": zod.string().max(profileAddressesDefaultShippingRetrieveResponseProfileFirstNameMax).optional().describe('User\'s first name'),
+  "last_name": zod.string().max(profileAddressesDefaultShippingRetrieveResponseProfileLastNameMax).optional().describe('User\'s last name')
+}).describe('Minimal profile serializer for address responses.'),
   "address": zod.string().max(profileAddressesDefaultShippingRetrieveResponseAddressMax).describe('Street address, apartment, unit, etc.'),
   "city": zod.string().max(profileAddressesDefaultShippingRetrieveResponseCityMax).describe('City name'),
   "postal_code": zod.string().max(profileAddressesDefaultShippingRetrieveResponsePostalCodeMax).describe('ZIP code or postal code'),
@@ -284,6 +342,8 @@ export const profileAddressesShippingRetrieveParams = zod.object({
   "id": zod.coerce.number()
 })
 
+export const profileAddressesShippingRetrieveResponseProfileFirstNameMax = 150;
+export const profileAddressesShippingRetrieveResponseProfileLastNameMax = 150;
 export const profileAddressesShippingRetrieveResponseAddressMax = 255;
 export const profileAddressesShippingRetrieveResponseCityMax = 100;
 export const profileAddressesShippingRetrieveResponsePostalCodeMax = 20;
@@ -292,6 +352,13 @@ export const profileAddressesShippingRetrieveResponseLabelMax = 50;
 
 export const profileAddressesShippingRetrieveResponse = zod.object({
   "id": zod.number(),
+  "profile": zod.object({
+  "id": zod.number(),
+  "user_email": zod.string(),
+  "display_name": zod.string(),
+  "first_name": zod.string().max(profileAddressesShippingRetrieveResponseProfileFirstNameMax).optional().describe('User\'s first name'),
+  "last_name": zod.string().max(profileAddressesShippingRetrieveResponseProfileLastNameMax).optional().describe('User\'s last name')
+}).describe('Minimal profile serializer for address responses.'),
   "address": zod.string().max(profileAddressesShippingRetrieveResponseAddressMax).describe('Street address, apartment, unit, etc.'),
   "city": zod.string().max(profileAddressesShippingRetrieveResponseCityMax).describe('City name'),
   "postal_code": zod.string().max(profileAddressesShippingRetrieveResponsePostalCodeMax).describe('ZIP code or postal code'),
@@ -311,6 +378,8 @@ export const profileAddressesSummaryRetrieveParams = zod.object({
   "id": zod.coerce.number()
 })
 
+export const profileAddressesSummaryRetrieveResponseProfileFirstNameMax = 150;
+export const profileAddressesSummaryRetrieveResponseProfileLastNameMax = 150;
 export const profileAddressesSummaryRetrieveResponseAddressMax = 255;
 export const profileAddressesSummaryRetrieveResponseCityMax = 100;
 export const profileAddressesSummaryRetrieveResponsePostalCodeMax = 20;
@@ -319,6 +388,13 @@ export const profileAddressesSummaryRetrieveResponseLabelMax = 50;
 
 export const profileAddressesSummaryRetrieveResponse = zod.object({
   "id": zod.number(),
+  "profile": zod.object({
+  "id": zod.number(),
+  "user_email": zod.string(),
+  "display_name": zod.string(),
+  "first_name": zod.string().max(profileAddressesSummaryRetrieveResponseProfileFirstNameMax).optional().describe('User\'s first name'),
+  "last_name": zod.string().max(profileAddressesSummaryRetrieveResponseProfileLastNameMax).optional().describe('User\'s last name')
+}).describe('Minimal profile serializer for address responses.'),
   "address": zod.string().max(profileAddressesSummaryRetrieveResponseAddressMax).describe('Street address, apartment, unit, etc.'),
   "city": zod.string().max(profileAddressesSummaryRetrieveResponseCityMax).describe('City name'),
   "postal_code": zod.string().max(profileAddressesSummaryRetrieveResponsePostalCodeMax).describe('ZIP code or postal code'),
@@ -354,6 +430,8 @@ export const profileAddressesUnsetDefaultPartialUpdateBody = zod.object({
   "label": zod.string().max(profileAddressesUnsetDefaultPartialUpdateBodyLabelMax).optional().describe('Optional label like \'Home\', \'Office\', etc.')
 })
 
+export const profileAddressesUnsetDefaultPartialUpdateResponseProfileFirstNameMax = 150;
+export const profileAddressesUnsetDefaultPartialUpdateResponseProfileLastNameMax = 150;
 export const profileAddressesUnsetDefaultPartialUpdateResponseAddressMax = 255;
 export const profileAddressesUnsetDefaultPartialUpdateResponseCityMax = 100;
 export const profileAddressesUnsetDefaultPartialUpdateResponsePostalCodeMax = 20;
@@ -362,6 +440,13 @@ export const profileAddressesUnsetDefaultPartialUpdateResponseLabelMax = 50;
 
 export const profileAddressesUnsetDefaultPartialUpdateResponse = zod.object({
   "id": zod.number(),
+  "profile": zod.object({
+  "id": zod.number(),
+  "user_email": zod.string(),
+  "display_name": zod.string(),
+  "first_name": zod.string().max(profileAddressesUnsetDefaultPartialUpdateResponseProfileFirstNameMax).optional().describe('User\'s first name'),
+  "last_name": zod.string().max(profileAddressesUnsetDefaultPartialUpdateResponseProfileLastNameMax).optional().describe('User\'s last name')
+}).describe('Minimal profile serializer for address responses.'),
   "address": zod.string().max(profileAddressesUnsetDefaultPartialUpdateResponseAddressMax).describe('Street address, apartment, unit, etc.'),
   "city": zod.string().max(profileAddressesUnsetDefaultPartialUpdateResponseCityMax).describe('City name'),
   "postal_code": zod.string().max(profileAddressesUnsetDefaultPartialUpdateResponsePostalCodeMax).describe('ZIP code or postal code'),
@@ -382,8 +467,10 @@ export const profileProfilesListParams = zod.object({
 })
 
 export const profileProfilesListQueryParams = zod.object({
+  "ordering": zod.coerce.string().optional().describe('Which field to use when ordering the results.'),
   "page": zod.coerce.number().optional().describe('A page number within the paginated result set.'),
-  "page_size": zod.coerce.number().optional().describe('Number of results to return per page.')
+  "page_size": zod.coerce.number().optional().describe('Number of results to return per page.'),
+  "search": zod.coerce.string().optional().describe('A search term.')
 })
 
 export const profileProfilesListResponse = zod.object({
@@ -393,6 +480,7 @@ export const profileProfilesListResponse = zod.object({
   "results": zod.array(zod.object({
   "id": zod.number(),
   "display_name": zod.string(),
+  "user_email": zod.string(),
   "profile_completed": zod.boolean().optional().describe('Whether profile has all required information for checkout'),
   "created_at": zod.string().datetime({}).describe('Timestamp when the record was created')
 }))

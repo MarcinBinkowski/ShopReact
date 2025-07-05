@@ -5,11 +5,13 @@
  * API for ShopDjango project
  * OpenAPI spec version: 1.0.0
  */
+import type { ProfileMinimal } from './profileMinimal';
 import type { AddressTypeEnum } from './addressTypeEnum';
 import type { PatchedAddressAddressDict } from './patchedAddressAddressDict';
 
 export interface PatchedAddress {
   readonly id?: number;
+  readonly profile?: ProfileMinimal;
   /**
    * Street address, apartment, unit, etc.
    * @maxLength 255

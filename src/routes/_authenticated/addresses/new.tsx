@@ -21,14 +21,11 @@ function NewAddressPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const createMutation = useProfileAddressesCreate()
 
-  const handleSubmit = async (formData: AddressFormData) => {
+  const handleSubmit = async (formData: AddressFormData & { profile?: number }) => {
     try {
       setIsSubmitting(true)
-      // Since this is create mode, we know the data should match the create schema
       const validatedData = profileAddressesCreateBody.parse(formData)
-      // If a profile is selected, include it in the payload
-      const payload = selectedProfileId ? { ...validatedData, profile: selectedProfileId } : validatedData
-      await createMutation.mutateAsync({ data: payload })
+      await createMutation.mutateAsync({ data: validatedData })
       queryClient.invalidateQueries({ queryKey: ["/api/profile/addresses/"] })
       toast.success("Address created successfully")
       navigate({ to: "/addresses" })
@@ -59,8 +56,6 @@ function NewAddressPage() {
       submitButtonText="Create Address"
       isSubmitting={isSubmitting}
       onCancel={handleCancel}
-      selectedProfileId={selectedProfileId}
-      onProfileChange={handleProfileChange}
     />
   )
 }

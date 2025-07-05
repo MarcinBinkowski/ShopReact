@@ -9,6 +9,7 @@
 export interface ProfileList {
   readonly id: number;
   readonly display_name: string;
+  readonly user_email: string;
   /** Whether profile has all required information for checkout */
   profile_completed?: boolean;
   /** Timestamp when the record was created */

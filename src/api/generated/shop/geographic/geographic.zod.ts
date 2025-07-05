@@ -15,8 +15,10 @@ export const geographicCountriesListParams = zod.object({
 })
 
 export const geographicCountriesListQueryParams = zod.object({
+  "ordering": zod.coerce.string().optional().describe('Which field to use when ordering the results.'),
   "page": zod.coerce.number().optional().describe('A page number within the paginated result set.'),
-  "page_size": zod.coerce.number().optional().describe('Number of results to return per page.')
+  "page_size": zod.coerce.number().optional().describe('Number of results to return per page.'),
+  "search": zod.coerce.string().optional().describe('A search term.')
 })
 
 export const geographicCountriesListResponseResultsItemCodeMax = 2;
@@ -46,44 +48,6 @@ export const geographicCountriesRetrieveResponse = zod.object({
   "id": zod.number(),
   "code": zod.string().max(geographicCountriesRetrieveResponseCodeMax).describe('alpha-2 country code (e.g., PL, US, GB)'),
   "name": zod.string().max(geographicCountriesRetrieveResponseNameMax).describe('Official country name in English'),
-  "created_at": zod.string().datetime({}).describe('Timestamp when the record was created'),
-  "updated_at": zod.string().datetime({}).describe('Timestamp when the record was last updated')
-}).describe('Full country serializer with all fields.')
-
-/**
- * Get country by code.
- */
-export const geographicCountriesByCodeRetrieveParams = zod.object({
-  "id": zod.coerce.number()
-})
-
-export const geographicCountriesByCodeRetrieveResponseCodeMax = 2;
-export const geographicCountriesByCodeRetrieveResponseNameMax = 100;
-
-
-export const geographicCountriesByCodeRetrieveResponse = zod.object({
-  "id": zod.number(),
-  "code": zod.string().max(geographicCountriesByCodeRetrieveResponseCodeMax).describe('alpha-2 country code (e.g., PL, US, GB)'),
-  "name": zod.string().max(geographicCountriesByCodeRetrieveResponseNameMax).describe('Official country name in English'),
-  "created_at": zod.string().datetime({}).describe('Timestamp when the record was created'),
-  "updated_at": zod.string().datetime({}).describe('Timestamp when the record was last updated')
-}).describe('Full country serializer with all fields.')
-
-/**
- * Search countries by name or code.
- */
-export const geographicCountriesSearchRetrieveParams = zod.object({
-  "id": zod.coerce.number()
-})
-
-export const geographicCountriesSearchRetrieveResponseCodeMax = 2;
-export const geographicCountriesSearchRetrieveResponseNameMax = 100;
-
-
-export const geographicCountriesSearchRetrieveResponse = zod.object({
-  "id": zod.number(),
-  "code": zod.string().max(geographicCountriesSearchRetrieveResponseCodeMax).describe('alpha-2 country code (e.g., PL, US, GB)'),
-  "name": zod.string().max(geographicCountriesSearchRetrieveResponseNameMax).describe('Official country name in English'),
   "created_at": zod.string().datetime({}).describe('Timestamp when the record was created'),
   "updated_at": zod.string().datetime({}).describe('Timestamp when the record was last updated')
 }).describe('Full country serializer with all fields.')

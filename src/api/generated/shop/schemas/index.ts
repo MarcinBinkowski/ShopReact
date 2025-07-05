@@ -49,6 +49,7 @@ export * from './profileAddressesListParams';
 export * from './profileBillingAddress';
 export * from './profileCreate';
 export * from './profileList';
+export * from './profileMinimal';
 export * from './profileProfilesListParams';
 export * from './profileShippingAddress';
 export * from './profileUpdate';

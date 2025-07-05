@@ -993,6 +993,12 @@ paths:
         schema:
           type: integer
         required: true
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
       - name: page
         required: false
         in: query
@@ -1005,6 +1011,12 @@ paths:
         description: Number of results to return per page.
         schema:
           type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
       tags:
       - geographic
       security:
@@ -1020,50 +1032,6 @@ paths:
   /api/geographic/countries/{id}/:
     get:
       operationId: geographic_countries_retrieve
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - geographic
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Country'
-          description: ''
-  /api/geographic/countries/by_code/:
-    get:
-      operationId: geographic_countries_by_code_retrieve
-      description: Get country by code.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - geographic
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Country'
-          description: ''
-  /api/geographic/countries/search/:
-    get:
-      operationId: geographic_countries_search_retrieve
-      description: Search countries by name or code.
       parameters:
       - in: path
         name: id
@@ -1117,6 +1085,8 @@ paths:
           description: ''
     post:
       operationId: profile_addresses_create
+      description: Create a new address. Profile field is optional - if not provided,
+        uses current user's profile.
       parameters:
       - in: path
         name: id
@@ -1145,7 +1115,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AddressCreate'
+                $ref: '#/components/schemas/Address'
           description: ''
   /api/profile/addresses/{id}/:
     get:
@@ -1425,6 +1395,12 @@ paths:
         schema:
           type: integer
         required: true
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
       - name: page
         required: false
         in: query
@@ -1437,6 +1413,12 @@ paths:
         description: Number of results to return per page.
         schema:
           type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
       tags:
       - profile
       security:
@@ -1767,6 +1749,10 @@ components:
         id:
           type: integer
           readOnly: true
+        profile:
+          allOf:
+          - $ref: '#/components/schemas/ProfileMinimal'
+          readOnly: true
         address:
           type: string
           description: Street address, apartment, unit, etc.
@@ -1832,10 +1818,15 @@ components:
       - id
       - is_complete
       - postal_code
+      - profile
       - updated_at
     AddressCreate:
       type: object
       properties:
+        profile:
+          type: integer
+          description: Profile ID to assign this address to. If not provided, uses
+            current user's profile.
         address:
           type: string
           description: Street address, apartment, unit, etc.
@@ -1878,6 +1869,10 @@ components:
         id:
           type: integer
           readOnly: true
+        profile:
+          allOf:
+          - $ref: '#/components/schemas/ProfileMinimal'
+          readOnly: true
         address_type:
           allOf:
           - $ref: '#/components/schemas/AddressTypeEnum'
@@ -1910,6 +1905,7 @@ components:
       - created_at
       - full_address
       - id
+      - profile
     AddressTypeEnum:
       enum:
       - shipping
@@ -2206,6 +2202,10 @@ components:
       properties:
         id:
           type: integer
+          readOnly: true
+        profile:
+          allOf:
+          - $ref: '#/components/schemas/ProfileMinimal'
           readOnly: true
         address:
           type: string
@@ -3031,6 +3031,9 @@ components:
         display_name:
           type: string
           readOnly: true
+        user_email:
+          type: string
+          readOnly: true
         profile_completed:
           type: boolean
           description: Whether profile has all required information for checkout
@@ -3043,6 +3046,32 @@ components:
       - created_at
       - display_name
       - id
+      - user_email
+    ProfileMinimal:
+      type: object
+      description: Minimal profile serializer for address responses.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user_email:
+          type: string
+          readOnly: true
+        display_name:
+          type: string
+          readOnly: true
+        first_name:
+          type: string
+          description: User's first name
+          maxLength: 150
+        last_name:
+          type: string
+          description: User's last name
+          maxLength: 150
+      required:
+      - display_name
+      - id
+      - user_email
     ProfileUpdate:
       type: object
       properties:

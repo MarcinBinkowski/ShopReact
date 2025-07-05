@@ -8,6 +8,8 @@
 import type { AddressTypeEnum } from './addressTypeEnum';
 
 export interface AddressCreate {
+  /** Profile ID to assign this address to. If not provided, uses current user's profile. */
+  profile?: number;
   /**
    * Street address, apartment, unit, etc.
    * @maxLength 255

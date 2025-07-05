@@ -5,10 +5,12 @@
  * API for ShopDjango project
  * OpenAPI spec version: 1.0.0
  */
+import type { ProfileMinimal } from './profileMinimal';
 import type { AddressTypeEnum } from './addressTypeEnum';
 
 export interface AddressList {
   readonly id: number;
+  readonly profile: ProfileMinimal;
   /** Type of address (shipping or billing)
 
 * `shipping` - Shipping

@@ -155,13 +155,16 @@ export function useProfileAddressesList<TData = Awaited<ReturnType<typeof profil
 
 
 
+/**
+ * Create a new address. Profile field is optional - if not provided, uses current user's profile.
+ */
 export const profileAddressesCreate = (
     addressCreate: AddressCreate,
  signal?: AbortSignal
 ) => {
       
       
-      return shopInstance<AddressCreate>(
+      return shopInstance<Address>(
       {url: `/api/profile/addresses/`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: addressCreate, signal
