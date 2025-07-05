@@ -4,353 +4,6 @@ info:
   version: 1.0.0
   description: API for ShopDjango project
 paths:
-  /api/addresses/:
-    get:
-      operationId: addresses_list
-      description: ViewSet for managing user addresses.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      - name: page
-        required: false
-        in: query
-        description: A page number within the paginated result set.
-        schema:
-          type: integer
-      - name: page_size
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      tags:
-      - addresses
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedAddressListList'
-          description: ''
-    post:
-      operationId: addresses_create
-      description: ViewSet for managing user addresses.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - addresses
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AddressCreate'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/AddressCreate'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/AddressCreate'
-        required: true
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AddressCreate'
-          description: ''
-  /api/addresses/{id}/:
-    get:
-      operationId: addresses_retrieve
-      description: ViewSet for managing user addresses.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - addresses
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Address'
-          description: ''
-    put:
-      operationId: addresses_update
-      description: ViewSet for managing user addresses.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - addresses
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AddressUpdate'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/AddressUpdate'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/AddressUpdate'
-        required: true
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AddressUpdate'
-          description: ''
-    patch:
-      operationId: addresses_partial_update
-      description: ViewSet for managing user addresses.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - addresses
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedAddressUpdate'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedAddressUpdate'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedAddressUpdate'
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AddressUpdate'
-          description: ''
-    delete:
-      operationId: addresses_destroy
-      description: ViewSet for managing user addresses.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - addresses
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
-  /api/addresses/{id}/set_default/:
-    patch:
-      operationId: addresses_set_default_partial_update
-      description: Set this address as default for its type.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - addresses
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedAddress'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedAddress'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedAddress'
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Address'
-          description: ''
-  /api/addresses/billing/:
-    get:
-      operationId: addresses_billing_retrieve
-      description: Get all billing addresses for the user.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - addresses
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Address'
-          description: ''
-  /api/addresses/default_billing/:
-    get:
-      operationId: addresses_default_billing_retrieve
-      description: Get default billing address for the user.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - addresses
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Address'
-          description: ''
-  /api/addresses/default_shipping/:
-    get:
-      operationId: addresses_default_shipping_retrieve
-      description: Get default shipping address for the user.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - addresses
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Address'
-          description: ''
-  /api/addresses/shipping/:
-    get:
-      operationId: addresses_shipping_retrieve
-      description: Get all shipping addresses for the user.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - addresses
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Address'
-          description: ''
-  /api/addresses/summary/:
-    get:
-      operationId: addresses_summary_retrieve
-      description: Get summary of user's addresses.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - addresses
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Address'
-          description: ''
-  /api/addresses/unset_default/:
-    patch:
-      operationId: addresses_unset_default_partial_update
-      description: Remove default status for addresses of specified type.
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - addresses
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedAddress'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedAddress'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedAddress'
-      security:
-      - tokenAuth: []
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Address'
-          description: ''
   /api/catalog/categories/:
     get:
       operationId: catalog_categories_list
@@ -1331,6 +984,781 @@ paths:
               schema:
                 $ref: '#/components/schemas/Tag'
           description: ''
+  /api/geographic/countries/:
+    get:
+      operationId: geographic_countries_list
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - geographic
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCountryListList'
+          description: ''
+  /api/geographic/countries/{id}/:
+    get:
+      operationId: geographic_countries_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - geographic
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Country'
+          description: ''
+  /api/geographic/countries/by_code/:
+    get:
+      operationId: geographic_countries_by_code_retrieve
+      description: Get country by code.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - geographic
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Country'
+          description: ''
+  /api/geographic/countries/search/:
+    get:
+      operationId: geographic_countries_search_retrieve
+      description: Search countries by name or code.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - geographic
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Country'
+          description: ''
+  /api/profile/addresses/:
+    get:
+      operationId: profile_addresses_list
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - profile
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAddressListList'
+          description: ''
+    post:
+      operationId: profile_addresses_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddressCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AddressCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AddressCreate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddressCreate'
+          description: ''
+  /api/profile/addresses/{id}/:
+    get:
+      operationId: profile_addresses_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address'
+          description: ''
+    put:
+      operationId: profile_addresses_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddressUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AddressUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AddressUpdate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddressUpdate'
+          description: ''
+    patch:
+      operationId: profile_addresses_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAddressUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAddressUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAddressUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddressUpdate'
+          description: ''
+    delete:
+      operationId: profile_addresses_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/profile/addresses/{id}/set_default/:
+    patch:
+      operationId: profile_addresses_set_default_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAddress'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAddress'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAddress'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address'
+          description: ''
+  /api/profile/addresses/billing/:
+    get:
+      operationId: profile_addresses_billing_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address'
+          description: ''
+  /api/profile/addresses/default_billing/:
+    get:
+      operationId: profile_addresses_default_billing_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address'
+          description: ''
+  /api/profile/addresses/default_shipping/:
+    get:
+      operationId: profile_addresses_default_shipping_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address'
+          description: ''
+  /api/profile/addresses/shipping/:
+    get:
+      operationId: profile_addresses_shipping_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address'
+          description: ''
+  /api/profile/addresses/summary/:
+    get:
+      operationId: profile_addresses_summary_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address'
+          description: ''
+  /api/profile/addresses/unset_default/:
+    patch:
+      operationId: profile_addresses_unset_default_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAddress'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAddress'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAddress'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address'
+          description: ''
+  /api/profile/profiles/:
+    get:
+      operationId: profile_profiles_list
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - profile
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProfileListList'
+          description: ''
+    post:
+      operationId: profile_profiles_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProfileCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProfileCreate'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileCreate'
+          description: ''
+  /api/profile/profiles/{id}/:
+    get:
+      operationId: profile_profiles_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: ''
+    put:
+      operationId: profile_profiles_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProfileUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProfileUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileUpdate'
+          description: ''
+    patch:
+      operationId: profile_profiles_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProfileUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProfileUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProfileUpdate'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileUpdate'
+          description: ''
+    delete:
+      operationId: profile_profiles_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/profile/profiles/{id}/update_completion_status/:
+    post:
+      operationId: profile_profiles_update_completion_status_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Profile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Profile'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: ''
+  /api/profile/profiles/addresses_summary/:
+    get:
+      operationId: profile_profiles_addresses_summary_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: ''
+  /api/profile/profiles/checkout_status/:
+    get:
+      operationId: profile_profiles_checkout_status_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: ''
+  /api/profile/profiles/completion_requirements/:
+    get:
+      operationId: profile_profiles_completion_requirements_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: ''
+  /api/profile/profiles/mark_completed/:
+    patch:
+      operationId: profile_profiles_mark_completed_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProfile'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: ''
+  /api/profile/profiles/me/:
+    get:
+      operationId: profile_profiles_me_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: ''
+    patch:
+      operationId: profile_profiles_me_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProfile'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProfile'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProfile'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: ''
 components:
   schemas:
     Address:
@@ -1352,9 +1780,8 @@ components:
           description: ZIP code or postal code
           maxLength: 20
         country:
-          type: string
-          description: ISO country code (e.g., PL, US, CA, GB)
-          maxLength: 2
+          type: integer
+          description: Country for this address
         address_type:
           allOf:
           - $ref: '#/components/schemas/AddressTypeEnum'
@@ -1399,6 +1826,7 @@ components:
       - address_type
       - address_type_display
       - city
+      - country
       - created_at
       - full_address
       - id
@@ -1421,9 +1849,8 @@ components:
           description: ZIP code or postal code
           maxLength: 20
         country:
-          type: string
-          description: ISO country code (e.g., PL, US, CA, GB)
-          maxLength: 2
+          type: integer
+          description: Country for this address
         address_type:
           allOf:
           - $ref: '#/components/schemas/AddressTypeEnum'
@@ -1443,6 +1870,7 @@ components:
       - address
       - address_type
       - city
+      - country
       - postal_code
     AddressList:
       type: object
@@ -1506,9 +1934,8 @@ components:
           description: ZIP code or postal code
           maxLength: 20
         country:
-          type: string
-          description: ISO country code (e.g., PL, US, CA, GB)
-          maxLength: 2
+          type: integer
+          description: Country for this address
         is_default:
           type: boolean
           description: Whether this is the default address for this type
@@ -1519,6 +1946,7 @@ components:
       required:
       - address
       - city
+      - country
       - postal_code
     Category:
       type: object
@@ -1562,6 +1990,56 @@ components:
       - name
       - slug
       - updated_at
+    Country:
+      type: object
+      description: Full country serializer with all fields.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        code:
+          type: string
+          description: alpha-2 country code (e.g., PL, US, GB)
+          maxLength: 2
+        name:
+          type: string
+          description: Official country name in English
+          maxLength: 100
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Timestamp when the record was created
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Timestamp when the record was last updated
+      required:
+      - code
+      - created_at
+      - id
+      - name
+      - updated_at
+    CountryList:
+      type: object
+      description: Simplified country serializer for list views.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        code:
+          type: string
+          description: alpha-2 country code (e.g., PL, US, GB)
+          maxLength: 2
+        name:
+          type: string
+          description: Official country name in English
+          maxLength: 100
+      required:
+      - code
+      - id
+      - name
     PaginatedAddressListList:
       type: object
       required:
@@ -1608,6 +2086,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Category'
+    PaginatedCountryListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/CountryList'
     PaginatedProductImageList:
       type: object
       required:
@@ -1654,6 +2155,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ProductList'
+    PaginatedProfileListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfileList'
     PaginatedTagList:
       type: object
       required:
@@ -1696,9 +2220,8 @@ components:
           description: ZIP code or postal code
           maxLength: 20
         country:
-          type: string
-          description: ISO country code (e.g., PL, US, CA, GB)
-          maxLength: 2
+          type: integer
+          description: Country for this address
         address_type:
           allOf:
           - $ref: '#/components/schemas/AddressTypeEnum'
@@ -1753,9 +2276,8 @@ components:
           description: ZIP code or postal code
           maxLength: 20
         country:
-          type: string
-          description: ISO country code (e.g., PL, US, CA, GB)
-          maxLength: 2
+          type: integer
+          description: Country for this address
         is_default:
           type: boolean
           description: Whether this is the default address for this type
@@ -1946,6 +2468,88 @@ components:
           format: date-time
           readOnly: true
           description: Timestamp when the record was last updated
+    PatchedProfile:
+      type: object
+      description: Serializer for user profile management.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        first_name:
+          type: string
+          description: User's first name
+          maxLength: 150
+        last_name:
+          type: string
+          description: User's last name
+          maxLength: 150
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+          description: User's date of birth (optional)
+        phone_number:
+          type: string
+          description: Primary phone number with country code
+          maxLength: 20
+        profile_completed:
+          type: boolean
+          readOnly: true
+          description: Whether profile has all required information for checkout
+        display_name:
+          type: string
+          readOnly: true
+        full_name:
+          type: string
+          readOnly: true
+        age:
+          type: integer
+          readOnly: true
+        is_checkout_ready:
+          type: boolean
+          readOnly: true
+        missing_checkout_fields:
+          type: array
+          items: {}
+          readOnly: true
+        shipping_address:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        billing_address:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Timestamp when the record was created
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Timestamp when the record was last updated
+    PatchedProfileUpdate:
+      type: object
+      properties:
+        first_name:
+          type: string
+          description: User's first name
+          maxLength: 150
+        last_name:
+          type: string
+          description: User's last name
+          maxLength: 150
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+          description: User's date of birth (optional)
+        phone_number:
+          type: string
+          description: Primary phone number with country code
+          maxLength: 20
     PatchedTag:
       type: object
       description: Serializer for Tag model.
@@ -2318,6 +2922,147 @@ components:
       - primary_image
       - sku
       - slug
+    Profile:
+      type: object
+      description: Serializer for user profile management.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        first_name:
+          type: string
+          description: User's first name
+          maxLength: 150
+        last_name:
+          type: string
+          description: User's last name
+          maxLength: 150
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+          description: User's date of birth (optional)
+        phone_number:
+          type: string
+          description: Primary phone number with country code
+          maxLength: 20
+        profile_completed:
+          type: boolean
+          readOnly: true
+          description: Whether profile has all required information for checkout
+        display_name:
+          type: string
+          readOnly: true
+        full_name:
+          type: string
+          readOnly: true
+        age:
+          type: integer
+          readOnly: true
+        is_checkout_ready:
+          type: boolean
+          readOnly: true
+        missing_checkout_fields:
+          type: array
+          items: {}
+          readOnly: true
+        shipping_address:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        billing_address:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Timestamp when the record was created
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Timestamp when the record was last updated
+      required:
+      - age
+      - billing_address
+      - created_at
+      - display_name
+      - full_name
+      - id
+      - is_checkout_ready
+      - missing_checkout_fields
+      - profile_completed
+      - shipping_address
+      - updated_at
+    ProfileCreate:
+      type: object
+      description: Serializer for creating new profiles (admin only).
+      properties:
+        user:
+          type: integer
+          description: Associated user account
+        first_name:
+          type: string
+          description: User's first name
+          maxLength: 150
+        last_name:
+          type: string
+          description: User's last name
+          maxLength: 150
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+          description: User's date of birth (optional)
+        phone_number:
+          type: string
+          description: Primary phone number with country code
+          maxLength: 20
+      required:
+      - user
+    ProfileList:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        display_name:
+          type: string
+          readOnly: true
+        profile_completed:
+          type: boolean
+          description: Whether profile has all required information for checkout
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Timestamp when the record was created
+      required:
+      - created_at
+      - display_name
+      - id
+    ProfileUpdate:
+      type: object
+      properties:
+        first_name:
+          type: string
+          description: User's first name
+          maxLength: 150
+        last_name:
+          type: string
+          description: User's last name
+          maxLength: 150
+        date_of_birth:
+          type: string
+          format: date
+          nullable: true
+          description: User's date of birth (optional)
+        phone_number:
+          type: string
+          description: Primary phone number with country code
+          maxLength: 20
     StatusEnum:
       enum:
       - draft

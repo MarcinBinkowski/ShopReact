@@ -10,12 +10,16 @@ import {
   ChevronLeft,
   ChevronRight,
   Tag,
+  FolderOpen,
+  MapPin,
 } from "lucide-react"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
   { name: "Products", href: "/catalog/products", icon: Package },
+  { name: "Categories", href: "/catalog/categories", icon: FolderOpen },
   { name: "Tags", href: "/catalog/tags", icon: Tag },
+  { name: "Addresses", href: "/addresses", icon: MapPin },
 ]
 
 export default function Sidebar() {

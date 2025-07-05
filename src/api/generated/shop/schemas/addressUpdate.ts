@@ -22,11 +22,8 @@ export interface AddressUpdate {
    * @maxLength 20
    */
   postal_code: string;
-  /**
-   * ISO country code (e.g., PL, US, CA, GB)
-   * @maxLength 2
-   */
-  country?: string;
+  /** Country for this address */
+  country: number;
   /** Whether this is the default address for this type */
   is_default?: boolean;
   /**

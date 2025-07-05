@@ -25,11 +25,8 @@ export interface Address {
    * @maxLength 20
    */
   postal_code: string;
-  /**
-   * ISO country code (e.g., PL, US, CA, GB)
-   * @maxLength 2
-   */
-  country?: string;
+  /** Country for this address */
+  country: number;
   /** Type of address (shipping or billing)
 
 * `shipping` - Shipping

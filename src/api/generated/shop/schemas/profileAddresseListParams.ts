@@ -6,7 +6,7 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export type AddressesListParams = {
+export type ProfileAddresseListParams = {
 /**
  * A page number within the paginated result set.
  */

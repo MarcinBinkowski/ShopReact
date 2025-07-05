@@ -3,7 +3,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { FormField } from "@/components/customui/form-field"
-import { FormSelect } from "@/components/customui/form-select"
 import { Spinner } from "@/components/customui/spinner"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -11,15 +10,7 @@ import { useEffect, useState } from "react"
 import type { ProductDetail } from '@/api/generated/shop/schemas'
 
 import { toast } from "sonner"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
-import { Badge } from "@/components/ui/badge"
 import { 
   useCatalogCategoriesList,
   useCatalogTagsList
@@ -28,9 +19,7 @@ import {
   catalogProductsCreateBody, 
   catalogProductsPartialUpdateBody 
 } from "@/api/generated/shop/catalog/catalog.zod"
-import AsyncSelect from "react-select/async"
 import { SingleValue, MultiValue } from "react-select"
-import { AsyncPaginate, LoadOptions } from 'react-select-async-paginate';
 import { catalogCategoriesList, catalogTagsList } from "@/api/generated/shop/catalog/catalog";
 import { AsyncPaginateSelect, OptionType } from "@/components/customui/AsyncPaginateSelect";
 
@@ -44,14 +33,19 @@ interface ProductFormProps {
   onCancel: () => void
 }
 
-// Debounce hook
-function useDebounce<T>(value: T, delay: number): T {
-  const [debounced, setDebounced] = useState(value)
-  useEffect(() => {
-    const handler = setTimeout(() => setDebounced(value), delay)
-    return () => clearTimeout(handler)
-  }, [value, delay])
-  return debounced
+// Helper to convert ISO string to 'YYYY-MM-DDTHH:mm' for datetime-local input
+function isoToLocalDatetime(iso: string | null | undefined) {
+  if (!iso) return '';
+  // Remove seconds and Z/timezone
+  return iso.slice(0, 16);
+}
+
+// Helper to convert 'YYYY-MM-DDTHH:mm' to ISO string
+function localDatetimeToIso(local: string | null | undefined) {
+  if (!local) return undefined;
+  // Add :00 seconds and Z (or use local time)
+  const date = new Date(local);
+  return date.toISOString();
 }
 
 export function ProductForm({
@@ -107,13 +101,16 @@ export function ProductForm({
         tag_ids: tagIds,
         status: initialData.status || 'draft',
         is_visible: initialData.is_visible ?? true,
-        sale_start: initialData.sale_start || null,
-        sale_end: initialData.sale_end || null
+        sale_start: isoToLocalDatetime(initialData.sale_start),
+        sale_end: isoToLocalDatetime(initialData.sale_end)
       })
     }
   }, [initialData, reset, categoriesData?.results])
 
   const handleFormSubmit = async (data: any) => {
+    // Convert local datetime to ISO string for Zod
+    if (data.sale_start) data.sale_start = localDatetimeToIso(data.sale_start);
+    if (data.sale_end) data.sale_end = localDatetimeToIso(data.sale_end);
     try {
       await onSubmit(data)
     } catch (error) {

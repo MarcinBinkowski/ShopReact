@@ -1,5 +1,4 @@
 import { AsyncPaginate, LoadOptions } from 'react-select-async-paginate';
-import { SingleValue, MultiValue } from 'react-select';
 
 export interface OptionType {
   value: number;
