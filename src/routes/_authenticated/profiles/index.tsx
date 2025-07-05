@@ -3,14 +3,14 @@
 import { useMemo } from "react"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { MaterialReactTable, type MRT_ColumnDef } from "material-react-table"
-import { useProfileAddressesList, useProfileAddressesDestroy } from "@/api/generated/shop/profile/profile"
+import { useProfileProfilesList, useProfileProfilesDestroy } from "@/api/generated/shop/profile/profile"
 import { useServerSideTable } from "@/hooks/useServerSideTable"
 import { ListPage } from "@/components/common/listPageHelpers/ListPage"
 import { RowActions } from "@/components/common/listPageHelpers/RowActions"
 import { createDateColumn } from "@/components/common/listPageHelpers/columnHelpers"
 import { useStandardRowActions } from "@/components/common/listPageHelpers/useStandardRowActions"
 
-function AddressesPage() {
+function ProfilesPage() {
   const navigate = useNavigate()
 
   // Use the generic table hook with automatic range filter handling
@@ -25,37 +25,38 @@ function AddressesPage() {
     dateRangeFilterFields: ['created_at'], // Date range filters
   })
 
-  const { data, isLoading, refetch } = useProfileAddressesList(apiParams)
-  const deleteMutation = useProfileAddressesDestroy()
+  const { data, isLoading, refetch } = useProfileProfilesList(apiParams)
+  const deleteMutation = useProfileProfilesDestroy()
 
   // Use the standard row actions abstraction
   const rowActions = useStandardRowActions({
-    editRoute: row => `/addresses/${row.original?.id || row.id}/edit`,
+    editRoute: row => `/profiles/${row.original?.id || row.id}/edit`,
     onDelete: async row => {
       await deleteMutation.mutateAsync({ id: row.original?.id || row.id })
       refetch()
     },
-    deleteConfirmMessage: row => `Delete address "${row.original?.full_address || row.full_address}"?`,
-    deleteSuccessMessage: "Address deleted"
+    deleteConfirmMessage: row => `Delete profile for "${row.original?.display_name || row.display_name}"?`,
+    deleteSuccessMessage: "Profile deleted"
   })
 
   // Define columns using helpers
   const columns = useMemo<MRT_ColumnDef<any>[]>(() => [
     { accessorKey: "id", header: "ID" },
-    { accessorKey: "profile.user_email", header: "User Email" },
-    { accessorKey: "full_address", header: "Full Address" },
-    { accessorKey: "address_type", header: "Type", Cell: ({ cell }) => cell.getValue() === 'shipping' ? 'Shipping' : 'Billing' },
-    { accessorKey: "label", header: "Label" },
-    { accessorKey: "is_default", header: "Default", Cell: ({ cell }) => cell.getValue() ? "Yes" : "No" },
+    { accessorKey: "display_name", header: "Display Name" },
+    { accessorKey: "user_email", header: "Email" },
+    { accessorKey: "first_name", header: "First Name" },
+    { accessorKey: "last_name", header: "Last Name" },
+    { accessorKey: "profile_completed", header: "Completed", Cell: ({ cell }) => cell.getValue() ? "Yes" : "No" },
     createDateColumn("created_at", "Created"),
+    createDateColumn("updated_at", "Updated"),
   ], [])
 
   return (
     <ListPage
-      title="Addresses"
-      description="Manage your shipping and billing addresses"
-      addButtonText="Add Address"
-      onAdd={() => navigate({ to: "/addresses/new" })}
+      title="Profiles"
+      description="Manage user profiles"
+      addButtonText="Add Profile"
+      onAdd={() => navigate({ to: "/profiles/new" })}
     >
       <MaterialReactTable
         columns={columns}
@@ -85,6 +86,6 @@ function AddressesPage() {
   )
 }
 
-export const Route = createFileRoute('/_authenticated/addresses/')({
-  component: AddressesPage,
+export const Route = createFileRoute('/_authenticated/profiles/')({
+  component: ProfilesPage,
 }) 

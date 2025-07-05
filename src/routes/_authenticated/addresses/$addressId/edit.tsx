@@ -8,7 +8,6 @@ import { Spinner } from "@/components/customui/spinner"
 import { toast } from "sonner"
 import { useQueryClient } from "@tanstack/react-query"
 import { z } from "zod"
-import { useState, useEffect } from "react"
 
 // Use the generated Zod schema types
 type AddressFormData = z.infer<typeof profileAddressesUpdateBody>
@@ -23,6 +22,7 @@ function EditAddressPage() {
 
   const handleSubmit = async (formData: AddressFormData) => {
     try {
+      // Validate the form data using Zod schema
       const validatedData = profileAddressesUpdateBody.parse(formData)
       
       await updateMutation.mutateAsync({ 
@@ -69,7 +69,6 @@ function EditAddressPage() {
 
   return (
     <AddressForm
-      key={`address-edit-${addressId}`}
       title="Edit Address"
       description="Update address information"
       initialData={address}
@@ -77,7 +76,6 @@ function EditAddressPage() {
       submitButtonText="Update Address"
       isSubmitting={updateMutation.isPending}
       onCancel={handleCancel}
-
     />
   )
 }

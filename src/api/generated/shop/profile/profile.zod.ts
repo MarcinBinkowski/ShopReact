@@ -473,16 +473,23 @@ export const profileProfilesListQueryParams = zod.object({
   "search": zod.coerce.string().optional().describe('A search term.')
 })
 
+export const profileProfilesListResponseResultsItemFirstNameMax = 150;
+export const profileProfilesListResponseResultsItemLastNameMax = 150;
+
+
 export const profileProfilesListResponse = zod.object({
   "count": zod.number(),
   "next": zod.string().url().nullish(),
   "previous": zod.string().url().nullish(),
   "results": zod.array(zod.object({
   "id": zod.number(),
+  "first_name": zod.string().max(profileProfilesListResponseResultsItemFirstNameMax).optional().describe('User\'s first name'),
+  "last_name": zod.string().max(profileProfilesListResponseResultsItemLastNameMax).optional().describe('User\'s last name'),
   "display_name": zod.string(),
   "user_email": zod.string(),
   "profile_completed": zod.boolean().optional().describe('Whether profile has all required information for checkout'),
-  "created_at": zod.string().datetime({}).describe('Timestamp when the record was created')
+  "created_at": zod.string().datetime({}).describe('Timestamp when the record was created'),
+  "updated_at": zod.string().datetime({}).describe('Timestamp when the record was last updated')
 }))
 })
 
@@ -492,7 +499,7 @@ export const profileProfilesCreateParams = zod.object({
 
 export const profileProfilesCreateBodyFirstNameMax = 150;
 export const profileProfilesCreateBodyLastNameMax = 150;
-export const profileProfilesCreateBodyPhoneNumberMax = 20;
+export const profileProfilesCreateBodyPhoneNumberRegExp = new RegExp('^\\+?[\\d\\s\\-\\(\\)]+$');
 
 
 export const profileProfilesCreateBody = zod.object({
@@ -500,7 +507,7 @@ export const profileProfilesCreateBody = zod.object({
   "first_name": zod.string().max(profileProfilesCreateBodyFirstNameMax).optional().describe('User\'s first name'),
   "last_name": zod.string().max(profileProfilesCreateBodyLastNameMax).optional().describe('User\'s last name'),
   "date_of_birth": zod.string().date().nullish().describe('User\'s date of birth (optional)'),
-  "phone_number": zod.string().max(profileProfilesCreateBodyPhoneNumberMax).optional().describe('Primary phone number with country code')
+  "phone_number": zod.string().regex(profileProfilesCreateBodyPhoneNumberRegExp).optional().describe('Phone number in international format. Supports digits, spaces, hyphens, parentheses, and optional \'+\' prefix. Example: +48131012012')
 }).describe('Serializer for creating new profiles (admin only).')
 
 export const profileProfilesRetrieveParams = zod.object({
@@ -509,7 +516,7 @@ export const profileProfilesRetrieveParams = zod.object({
 
 export const profileProfilesRetrieveResponseFirstNameMax = 150;
 export const profileProfilesRetrieveResponseLastNameMax = 150;
-export const profileProfilesRetrieveResponsePhoneNumberMax = 20;
+export const profileProfilesRetrieveResponsePhoneNumberRegExp = new RegExp('^\\+?[\\d\\s\\-\\(\\)]+$');
 
 
 export const profileProfilesRetrieveResponse = zod.object({
@@ -517,7 +524,7 @@ export const profileProfilesRetrieveResponse = zod.object({
   "first_name": zod.string().max(profileProfilesRetrieveResponseFirstNameMax).optional().describe('User\'s first name'),
   "last_name": zod.string().max(profileProfilesRetrieveResponseLastNameMax).optional().describe('User\'s last name'),
   "date_of_birth": zod.string().date().nullish().describe('User\'s date of birth (optional)'),
-  "phone_number": zod.string().max(profileProfilesRetrieveResponsePhoneNumberMax).optional().describe('Primary phone number with country code'),
+  "phone_number": zod.string().regex(profileProfilesRetrieveResponsePhoneNumberRegExp).optional().describe('Phone number in international format. Supports digits, spaces, hyphens, parentheses, and optional \'+\' prefix. Example: +48131012012'),
   "profile_completed": zod.boolean().describe('Whether profile has all required information for checkout'),
   "display_name": zod.string(),
   "full_name": zod.string(),
@@ -536,26 +543,26 @@ export const profileProfilesUpdateParams = zod.object({
 
 export const profileProfilesUpdateBodyFirstNameMax = 150;
 export const profileProfilesUpdateBodyLastNameMax = 150;
-export const profileProfilesUpdateBodyPhoneNumberMax = 20;
+export const profileProfilesUpdateBodyPhoneNumberRegExp = new RegExp('^\\+?[\\d\\s\\-\\(\\)]+$');
 
 
 export const profileProfilesUpdateBody = zod.object({
   "first_name": zod.string().max(profileProfilesUpdateBodyFirstNameMax).optional().describe('User\'s first name'),
   "last_name": zod.string().max(profileProfilesUpdateBodyLastNameMax).optional().describe('User\'s last name'),
   "date_of_birth": zod.string().date().nullish().describe('User\'s date of birth (optional)'),
-  "phone_number": zod.string().max(profileProfilesUpdateBodyPhoneNumberMax).optional().describe('Primary phone number with country code')
+  "phone_number": zod.string().regex(profileProfilesUpdateBodyPhoneNumberRegExp).optional().describe('Phone number in international format. Supports digits, spaces, hyphens, parentheses, and optional \'+\' prefix. Example: +48131012012')
 })
 
 export const profileProfilesUpdateResponseFirstNameMax = 150;
 export const profileProfilesUpdateResponseLastNameMax = 150;
-export const profileProfilesUpdateResponsePhoneNumberMax = 20;
+export const profileProfilesUpdateResponsePhoneNumberRegExp = new RegExp('^\\+?[\\d\\s\\-\\(\\)]+$');
 
 
 export const profileProfilesUpdateResponse = zod.object({
   "first_name": zod.string().max(profileProfilesUpdateResponseFirstNameMax).optional().describe('User\'s first name'),
   "last_name": zod.string().max(profileProfilesUpdateResponseLastNameMax).optional().describe('User\'s last name'),
   "date_of_birth": zod.string().date().nullish().describe('User\'s date of birth (optional)'),
-  "phone_number": zod.string().max(profileProfilesUpdateResponsePhoneNumberMax).optional().describe('Primary phone number with country code')
+  "phone_number": zod.string().regex(profileProfilesUpdateResponsePhoneNumberRegExp).optional().describe('Phone number in international format. Supports digits, spaces, hyphens, parentheses, and optional \'+\' prefix. Example: +48131012012')
 })
 
 export const profileProfilesPartialUpdateParams = zod.object({
@@ -564,26 +571,26 @@ export const profileProfilesPartialUpdateParams = zod.object({
 
 export const profileProfilesPartialUpdateBodyFirstNameMax = 150;
 export const profileProfilesPartialUpdateBodyLastNameMax = 150;
-export const profileProfilesPartialUpdateBodyPhoneNumberMax = 20;
+export const profileProfilesPartialUpdateBodyPhoneNumberRegExp = new RegExp('^\\+?[\\d\\s\\-\\(\\)]+$');
 
 
 export const profileProfilesPartialUpdateBody = zod.object({
   "first_name": zod.string().max(profileProfilesPartialUpdateBodyFirstNameMax).optional().describe('User\'s first name'),
   "last_name": zod.string().max(profileProfilesPartialUpdateBodyLastNameMax).optional().describe('User\'s last name'),
   "date_of_birth": zod.string().date().nullish().describe('User\'s date of birth (optional)'),
-  "phone_number": zod.string().max(profileProfilesPartialUpdateBodyPhoneNumberMax).optional().describe('Primary phone number with country code')
+  "phone_number": zod.string().regex(profileProfilesPartialUpdateBodyPhoneNumberRegExp).optional().describe('Phone number in international format. Supports digits, spaces, hyphens, parentheses, and optional \'+\' prefix. Example: +48131012012')
 })
 
 export const profileProfilesPartialUpdateResponseFirstNameMax = 150;
 export const profileProfilesPartialUpdateResponseLastNameMax = 150;
-export const profileProfilesPartialUpdateResponsePhoneNumberMax = 20;
+export const profileProfilesPartialUpdateResponsePhoneNumberRegExp = new RegExp('^\\+?[\\d\\s\\-\\(\\)]+$');
 
 
 export const profileProfilesPartialUpdateResponse = zod.object({
   "first_name": zod.string().max(profileProfilesPartialUpdateResponseFirstNameMax).optional().describe('User\'s first name'),
   "last_name": zod.string().max(profileProfilesPartialUpdateResponseLastNameMax).optional().describe('User\'s last name'),
   "date_of_birth": zod.string().date().nullish().describe('User\'s date of birth (optional)'),
-  "phone_number": zod.string().max(profileProfilesPartialUpdateResponsePhoneNumberMax).optional().describe('Primary phone number with country code')
+  "phone_number": zod.string().regex(profileProfilesPartialUpdateResponsePhoneNumberRegExp).optional().describe('Phone number in international format. Supports digits, spaces, hyphens, parentheses, and optional \'+\' prefix. Example: +48131012012')
 })
 
 export const profileProfilesDestroyParams = zod.object({
@@ -596,19 +603,19 @@ export const profileProfilesUpdateCompletionStatusCreateParams = zod.object({
 
 export const profileProfilesUpdateCompletionStatusCreateBodyFirstNameMax = 150;
 export const profileProfilesUpdateCompletionStatusCreateBodyLastNameMax = 150;
-export const profileProfilesUpdateCompletionStatusCreateBodyPhoneNumberMax = 20;
+export const profileProfilesUpdateCompletionStatusCreateBodyPhoneNumberRegExp = new RegExp('^\\+?[\\d\\s\\-\\(\\)]+$');
 
 
 export const profileProfilesUpdateCompletionStatusCreateBody = zod.object({
   "first_name": zod.string().max(profileProfilesUpdateCompletionStatusCreateBodyFirstNameMax).optional().describe('User\'s first name'),
   "last_name": zod.string().max(profileProfilesUpdateCompletionStatusCreateBodyLastNameMax).optional().describe('User\'s last name'),
   "date_of_birth": zod.string().date().nullish().describe('User\'s date of birth (optional)'),
-  "phone_number": zod.string().max(profileProfilesUpdateCompletionStatusCreateBodyPhoneNumberMax).optional().describe('Primary phone number with country code')
+  "phone_number": zod.string().regex(profileProfilesUpdateCompletionStatusCreateBodyPhoneNumberRegExp).optional().describe('Phone number in international format. Supports digits, spaces, hyphens, parentheses, and optional \'+\' prefix. Example: +48131012012')
 }).describe('Serializer for user profile management.')
 
 export const profileProfilesUpdateCompletionStatusCreateResponseFirstNameMax = 150;
 export const profileProfilesUpdateCompletionStatusCreateResponseLastNameMax = 150;
-export const profileProfilesUpdateCompletionStatusCreateResponsePhoneNumberMax = 20;
+export const profileProfilesUpdateCompletionStatusCreateResponsePhoneNumberRegExp = new RegExp('^\\+?[\\d\\s\\-\\(\\)]+$');
 
 
 export const profileProfilesUpdateCompletionStatusCreateResponse = zod.object({
@@ -616,7 +623,7 @@ export const profileProfilesUpdateCompletionStatusCreateResponse = zod.object({
   "first_name": zod.string().max(profileProfilesUpdateCompletionStatusCreateResponseFirstNameMax).optional().describe('User\'s first name'),
   "last_name": zod.string().max(profileProfilesUpdateCompletionStatusCreateResponseLastNameMax).optional().describe('User\'s last name'),
   "date_of_birth": zod.string().date().nullish().describe('User\'s date of birth (optional)'),
-  "phone_number": zod.string().max(profileProfilesUpdateCompletionStatusCreateResponsePhoneNumberMax).optional().describe('Primary phone number with country code'),
+  "phone_number": zod.string().regex(profileProfilesUpdateCompletionStatusCreateResponsePhoneNumberRegExp).optional().describe('Phone number in international format. Supports digits, spaces, hyphens, parentheses, and optional \'+\' prefix. Example: +48131012012'),
   "profile_completed": zod.boolean().describe('Whether profile has all required information for checkout'),
   "display_name": zod.string(),
   "full_name": zod.string(),
@@ -635,7 +642,7 @@ export const profileProfilesAddressesSummaryRetrieveParams = zod.object({
 
 export const profileProfilesAddressesSummaryRetrieveResponseFirstNameMax = 150;
 export const profileProfilesAddressesSummaryRetrieveResponseLastNameMax = 150;
-export const profileProfilesAddressesSummaryRetrieveResponsePhoneNumberMax = 20;
+export const profileProfilesAddressesSummaryRetrieveResponsePhoneNumberRegExp = new RegExp('^\\+?[\\d\\s\\-\\(\\)]+$');
 
 
 export const profileProfilesAddressesSummaryRetrieveResponse = zod.object({
@@ -643,7 +650,7 @@ export const profileProfilesAddressesSummaryRetrieveResponse = zod.object({
   "first_name": zod.string().max(profileProfilesAddressesSummaryRetrieveResponseFirstNameMax).optional().describe('User\'s first name'),
   "last_name": zod.string().max(profileProfilesAddressesSummaryRetrieveResponseLastNameMax).optional().describe('User\'s last name'),
   "date_of_birth": zod.string().date().nullish().describe('User\'s date of birth (optional)'),
-  "phone_number": zod.string().max(profileProfilesAddressesSummaryRetrieveResponsePhoneNumberMax).optional().describe('Primary phone number with country code'),
+  "phone_number": zod.string().regex(profileProfilesAddressesSummaryRetrieveResponsePhoneNumberRegExp).optional().describe('Phone number in international format. Supports digits, spaces, hyphens, parentheses, and optional \'+\' prefix. Example: +48131012012'),
   "profile_completed": zod.boolean().describe('Whether profile has all required information for checkout'),
   "display_name": zod.string(),
   "full_name": zod.string(),
@@ -662,7 +669,7 @@ export const profileProfilesCheckoutStatusRetrieveParams = zod.object({
 
 export const profileProfilesCheckoutStatusRetrieveResponseFirstNameMax = 150;
 export const profileProfilesCheckoutStatusRetrieveResponseLastNameMax = 150;
-export const profileProfilesCheckoutStatusRetrieveResponsePhoneNumberMax = 20;
+export const profileProfilesCheckoutStatusRetrieveResponsePhoneNumberRegExp = new RegExp('^\\+?[\\d\\s\\-\\(\\)]+$');
 
 
 export const profileProfilesCheckoutStatusRetrieveResponse = zod.object({
@@ -670,7 +677,7 @@ export const profileProfilesCheckoutStatusRetrieveResponse = zod.object({
   "first_name": zod.string().max(profileProfilesCheckoutStatusRetrieveResponseFirstNameMax).optional().describe('User\'s first name'),
   "last_name": zod.string().max(profileProfilesCheckoutStatusRetrieveResponseLastNameMax).optional().describe('User\'s last name'),
   "date_of_birth": zod.string().date().nullish().describe('User\'s date of birth (optional)'),
-  "phone_number": zod.string().max(profileProfilesCheckoutStatusRetrieveResponsePhoneNumberMax).optional().describe('Primary phone number with country code'),
+  "phone_number": zod.string().regex(profileProfilesCheckoutStatusRetrieveResponsePhoneNumberRegExp).optional().describe('Phone number in international format. Supports digits, spaces, hyphens, parentheses, and optional \'+\' prefix. Example: +48131012012'),
   "profile_completed": zod.boolean().describe('Whether profile has all required information for checkout'),
   "display_name": zod.string(),
   "full_name": zod.string(),
@@ -689,7 +696,7 @@ export const profileProfilesCompletionRequirementsRetrieveParams = zod.object({
 
 export const profileProfilesCompletionRequirementsRetrieveResponseFirstNameMax = 150;
 export const profileProfilesCompletionRequirementsRetrieveResponseLastNameMax = 150;
-export const profileProfilesCompletionRequirementsRetrieveResponsePhoneNumberMax = 20;
+export const profileProfilesCompletionRequirementsRetrieveResponsePhoneNumberRegExp = new RegExp('^\\+?[\\d\\s\\-\\(\\)]+$');
 
 
 export const profileProfilesCompletionRequirementsRetrieveResponse = zod.object({
@@ -697,7 +704,7 @@ export const profileProfilesCompletionRequirementsRetrieveResponse = zod.object(
   "first_name": zod.string().max(profileProfilesCompletionRequirementsRetrieveResponseFirstNameMax).optional().describe('User\'s first name'),
   "last_name": zod.string().max(profileProfilesCompletionRequirementsRetrieveResponseLastNameMax).optional().describe('User\'s last name'),
   "date_of_birth": zod.string().date().nullish().describe('User\'s date of birth (optional)'),
-  "phone_number": zod.string().max(profileProfilesCompletionRequirementsRetrieveResponsePhoneNumberMax).optional().describe('Primary phone number with country code'),
+  "phone_number": zod.string().regex(profileProfilesCompletionRequirementsRetrieveResponsePhoneNumberRegExp).optional().describe('Phone number in international format. Supports digits, spaces, hyphens, parentheses, and optional \'+\' prefix. Example: +48131012012'),
   "profile_completed": zod.boolean().describe('Whether profile has all required information for checkout'),
   "display_name": zod.string(),
   "full_name": zod.string(),
@@ -716,19 +723,19 @@ export const profileProfilesMarkCompletedPartialUpdateParams = zod.object({
 
 export const profileProfilesMarkCompletedPartialUpdateBodyFirstNameMax = 150;
 export const profileProfilesMarkCompletedPartialUpdateBodyLastNameMax = 150;
-export const profileProfilesMarkCompletedPartialUpdateBodyPhoneNumberMax = 20;
+export const profileProfilesMarkCompletedPartialUpdateBodyPhoneNumberRegExp = new RegExp('^\\+?[\\d\\s\\-\\(\\)]+$');
 
 
 export const profileProfilesMarkCompletedPartialUpdateBody = zod.object({
   "first_name": zod.string().max(profileProfilesMarkCompletedPartialUpdateBodyFirstNameMax).optional().describe('User\'s first name'),
   "last_name": zod.string().max(profileProfilesMarkCompletedPartialUpdateBodyLastNameMax).optional().describe('User\'s last name'),
   "date_of_birth": zod.string().date().nullish().describe('User\'s date of birth (optional)'),
-  "phone_number": zod.string().max(profileProfilesMarkCompletedPartialUpdateBodyPhoneNumberMax).optional().describe('Primary phone number with country code')
+  "phone_number": zod.string().regex(profileProfilesMarkCompletedPartialUpdateBodyPhoneNumberRegExp).optional().describe('Phone number in international format. Supports digits, spaces, hyphens, parentheses, and optional \'+\' prefix. Example: +48131012012')
 }).describe('Serializer for user profile management.')
 
 export const profileProfilesMarkCompletedPartialUpdateResponseFirstNameMax = 150;
 export const profileProfilesMarkCompletedPartialUpdateResponseLastNameMax = 150;
-export const profileProfilesMarkCompletedPartialUpdateResponsePhoneNumberMax = 20;
+export const profileProfilesMarkCompletedPartialUpdateResponsePhoneNumberRegExp = new RegExp('^\\+?[\\d\\s\\-\\(\\)]+$');
 
 
 export const profileProfilesMarkCompletedPartialUpdateResponse = zod.object({
@@ -736,7 +743,7 @@ export const profileProfilesMarkCompletedPartialUpdateResponse = zod.object({
   "first_name": zod.string().max(profileProfilesMarkCompletedPartialUpdateResponseFirstNameMax).optional().describe('User\'s first name'),
   "last_name": zod.string().max(profileProfilesMarkCompletedPartialUpdateResponseLastNameMax).optional().describe('User\'s last name'),
   "date_of_birth": zod.string().date().nullish().describe('User\'s date of birth (optional)'),
-  "phone_number": zod.string().max(profileProfilesMarkCompletedPartialUpdateResponsePhoneNumberMax).optional().describe('Primary phone number with country code'),
+  "phone_number": zod.string().regex(profileProfilesMarkCompletedPartialUpdateResponsePhoneNumberRegExp).optional().describe('Phone number in international format. Supports digits, spaces, hyphens, parentheses, and optional \'+\' prefix. Example: +48131012012'),
   "profile_completed": zod.boolean().describe('Whether profile has all required information for checkout'),
   "display_name": zod.string(),
   "full_name": zod.string(),
@@ -755,7 +762,7 @@ export const profileProfilesMeRetrieveParams = zod.object({
 
 export const profileProfilesMeRetrieveResponseFirstNameMax = 150;
 export const profileProfilesMeRetrieveResponseLastNameMax = 150;
-export const profileProfilesMeRetrieveResponsePhoneNumberMax = 20;
+export const profileProfilesMeRetrieveResponsePhoneNumberRegExp = new RegExp('^\\+?[\\d\\s\\-\\(\\)]+$');
 
 
 export const profileProfilesMeRetrieveResponse = zod.object({
@@ -763,7 +770,7 @@ export const profileProfilesMeRetrieveResponse = zod.object({
   "first_name": zod.string().max(profileProfilesMeRetrieveResponseFirstNameMax).optional().describe('User\'s first name'),
   "last_name": zod.string().max(profileProfilesMeRetrieveResponseLastNameMax).optional().describe('User\'s last name'),
   "date_of_birth": zod.string().date().nullish().describe('User\'s date of birth (optional)'),
-  "phone_number": zod.string().max(profileProfilesMeRetrieveResponsePhoneNumberMax).optional().describe('Primary phone number with country code'),
+  "phone_number": zod.string().regex(profileProfilesMeRetrieveResponsePhoneNumberRegExp).optional().describe('Phone number in international format. Supports digits, spaces, hyphens, parentheses, and optional \'+\' prefix. Example: +48131012012'),
   "profile_completed": zod.boolean().describe('Whether profile has all required information for checkout'),
   "display_name": zod.string(),
   "full_name": zod.string(),
@@ -782,19 +789,19 @@ export const profileProfilesMePartialUpdateParams = zod.object({
 
 export const profileProfilesMePartialUpdateBodyFirstNameMax = 150;
 export const profileProfilesMePartialUpdateBodyLastNameMax = 150;
-export const profileProfilesMePartialUpdateBodyPhoneNumberMax = 20;
+export const profileProfilesMePartialUpdateBodyPhoneNumberRegExp = new RegExp('^\\+?[\\d\\s\\-\\(\\)]+$');
 
 
 export const profileProfilesMePartialUpdateBody = zod.object({
   "first_name": zod.string().max(profileProfilesMePartialUpdateBodyFirstNameMax).optional().describe('User\'s first name'),
   "last_name": zod.string().max(profileProfilesMePartialUpdateBodyLastNameMax).optional().describe('User\'s last name'),
   "date_of_birth": zod.string().date().nullish().describe('User\'s date of birth (optional)'),
-  "phone_number": zod.string().max(profileProfilesMePartialUpdateBodyPhoneNumberMax).optional().describe('Primary phone number with country code')
+  "phone_number": zod.string().regex(profileProfilesMePartialUpdateBodyPhoneNumberRegExp).optional().describe('Phone number in international format. Supports digits, spaces, hyphens, parentheses, and optional \'+\' prefix. Example: +48131012012')
 }).describe('Serializer for user profile management.')
 
 export const profileProfilesMePartialUpdateResponseFirstNameMax = 150;
 export const profileProfilesMePartialUpdateResponseLastNameMax = 150;
-export const profileProfilesMePartialUpdateResponsePhoneNumberMax = 20;
+export const profileProfilesMePartialUpdateResponsePhoneNumberRegExp = new RegExp('^\\+?[\\d\\s\\-\\(\\)]+$');
 
 
 export const profileProfilesMePartialUpdateResponse = zod.object({
@@ -802,7 +809,7 @@ export const profileProfilesMePartialUpdateResponse = zod.object({
   "first_name": zod.string().max(profileProfilesMePartialUpdateResponseFirstNameMax).optional().describe('User\'s first name'),
   "last_name": zod.string().max(profileProfilesMePartialUpdateResponseLastNameMax).optional().describe('User\'s last name'),
   "date_of_birth": zod.string().date().nullish().describe('User\'s date of birth (optional)'),
-  "phone_number": zod.string().max(profileProfilesMePartialUpdateResponsePhoneNumberMax).optional().describe('Primary phone number with country code'),
+  "phone_number": zod.string().regex(profileProfilesMePartialUpdateResponsePhoneNumberRegExp).optional().describe('Phone number in international format. Supports digits, spaces, hyphens, parentheses, and optional \'+\' prefix. Example: +48131012012'),
   "profile_completed": zod.boolean().describe('Whether profile has all required information for checkout'),
   "display_name": zod.string(),
   "full_name": zod.string(),

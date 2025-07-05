@@ -2,10 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { FormField } from "@/components/customui/form-field"
 import { Spinner } from "@/components/customui/spinner"
-import { profileAddressesCreateBody, profileAddressesUpdateBody } from "@/api/generated/shop/profile/profile.zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect } from "react"
@@ -17,6 +15,7 @@ import { useGeographicCountriesList, geographicCountriesList } from "@/api/gener
 import { useProfileProfilesList, profileProfilesList } from "@/api/generated/shop/profile/profile"
 import { AsyncPaginateSelect, OptionType } from "@/components/customui/AsyncPaginateSelect"
 import { SingleValue } from "react-select"
+import { profileAddressesCreateBody, profileAddressesUpdateBody } from "@/api/generated/shop/profile/profile.zod"
 
 // Use the generated Zod schema types
 type AddressCreateData = z.infer<typeof profileAddressesCreateBody>
@@ -29,8 +28,8 @@ interface AddressFormProps {
   initialData?: Address
   onSubmit: (data: AddressFormData) => Promise<void>
   submitButtonText: string
-  isSubmitting: boolean
-  onCancel?: () => void
+  isSubmitting?: boolean
+  onCancel: () => void
 }
 
 export function AddressForm({
@@ -39,46 +38,46 @@ export function AddressForm({
   initialData,
   onSubmit,
   submitButtonText,
-  isSubmitting,
+  isSubmitting: externalIsSubmitting,
   onCancel,
 }: AddressFormProps) {
   const isEditMode = !!initialData
   
-  // Fetch profiles for all modes
-  const { data: profilesData, isLoading: profilesLoading } = useProfileProfilesList(
-    undefined, // No params needed for listing all profiles
-    {
-      query: {
-        enabled: true, // Always fetch profiles
-      },
-    }
-  )
+  // Use the correct schema based on whether we're editing or creating
+  const schema = isEditMode ? profileAddressesUpdateBody : profileAddressesCreateBody
   
   const {
     register,
-    handleSubmit: formHandleSubmit,
+    handleSubmit,
     formState: { errors, isSubmitting: hookIsSubmitting },
     reset,
     setValue,
     watch
   } = useForm<AddressFormData & { profile?: number }>({
-    resolver: zodResolver(isEditMode ? profileAddressesUpdateBody : profileAddressesCreateBody),
+    resolver: zodResolver(schema),
     defaultValues: {
       address: "",
       city: "",
       postal_code: "",
-      country: 1, // Default to first country
+      country: 1,
       ...(isEditMode ? {} : { address_type: "shipping" as const }),
       is_default: false,
       label: "",
       profile: initialData?.profile?.id,
     },
+    mode: 'onChange'
   })
 
-  // Fetch countries for default options
+  const isSubmitting = externalIsSubmitting ?? hookIsSubmitting
+
+  // Fetch profiles and countries
+  const { data: profilesData, isLoading: profilesLoading } = useProfileProfilesList(undefined, {
+    query: { enabled: true }
+  })
   const { data: defaultCountries } = useGeographicCountriesList({ page: 1, page_size: 50 })
   const defaultCountryOptions = defaultCountries?.results?.map(c => ({ value: c.id, label: c.name })) || []
 
+  // Initialize form with initialData
   useEffect(() => {
     if (initialData) {
       reset({
@@ -94,9 +93,7 @@ export function AddressForm({
     }
   }, [initialData, reset])
 
-
-
-  const handleSubmit = async (data: AddressFormData) => {
+  const handleFormSubmit = async (data: AddressFormData) => {
     try {
       await onSubmit(data)
     } catch (error) {
@@ -105,21 +102,23 @@ export function AddressForm({
   }
 
   return (
-    <div className="container mx-auto py-6">
+    <form onSubmit={handleSubmit(handleFormSubmit)}>
       <div className="mb-6">
         <h1 className="text-3xl font-bold">{title}</h1>
         <p className="text-muted-foreground">{description}</p>
       </div>
 
-      <form onSubmit={formHandleSubmit(handleSubmit)} className="space-y-6">
+      <div className="space-y-6">
         <Card>
           <CardHeader>
             <CardTitle>Address Information</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-                        {/* Profile Selector - Always editable in both create and edit modes */}
-            <div className="space-y-2">
-              <Label htmlFor="profile">User Profile</Label>
+            {/* Profile Selector */}
+            <div>
+              <label htmlFor="profile" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                User Profile
+              </label>
               <AsyncPaginateSelect
                 value={(() => {
                   const profileId = watch("profile")
@@ -130,8 +129,8 @@ export function AddressForm({
                 onChange={(option) => {
                   setValue("profile", option?.value || undefined)
                 }}
-                isDisabled={profilesLoading}
-                error={undefined}
+                isDisabled={profilesLoading || isSubmitting}
+                error={errors.profile && String(errors.profile.message)}
                 placeholder="Select user profile"
                 isMulti={false}
                 fetcher={profileProfilesList}
@@ -145,50 +144,37 @@ export function AddressForm({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="address">Street Address</Label>
-                <Input
-                  id="address"
-                  {...register("address")}
-                  placeholder="123 Main St, Apt 4B"
-                />
-                {errors.address && (
-                  <p className="text-sm text-red-600">
-                    {errors.address.message}
-                  </p>
-                )}
-              </div>
+              <FormField
+                label="Street Address"
+                id="address"
+                placeholder="123 Main St, Apt 4B"
+                register={register("address")}
+                error={errors.address}
+                disabled={isSubmitting}
+              />
 
-              <div className="space-y-2">
-                <Label htmlFor="city">City</Label>
-                <Input
-                  id="city"
-                  {...register("city")}
-                  placeholder="New York"
-                />
-                {errors.city && (
-                  <p className="text-sm text-red-600">
-                    {errors.city.message}
-                  </p>
-                )}
-              </div>
+              <FormField
+                label="City"
+                id="city"
+                placeholder="New York"
+                register={register("city")}
+                error={errors.city}
+                disabled={isSubmitting}
+              />
 
-              <div className="space-y-2">
-                <Label htmlFor="postal_code">Postal Code</Label>
-                <Input
-                  id="postal_code"
-                  {...register("postal_code")}
-                  placeholder="10001"
-                />
-                {errors.postal_code && (
-                  <p className="text-sm text-red-600">
-                    {errors.postal_code.message}
-                  </p>
-                )}
-              </div>
+              <FormField
+                label="Postal Code"
+                id="postal_code"
+                placeholder="10001"
+                register={register("postal_code")}
+                error={errors.postal_code}
+                disabled={isSubmitting}
+              />
 
-              <div className="space-y-2">
-                <Label htmlFor="country">Country</Label>
+              <div>
+                <label htmlFor="country" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  Country
+                </label>
                 <AsyncPaginateSelect
                   value={(() => {
                     const id = watch("country")
@@ -211,8 +197,10 @@ export function AddressForm({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {!isEditMode && (
-                <div className="space-y-2">
-                  <Label htmlFor="address_type">Address Type</Label>
+                <div>
+                  <label htmlFor="address_type" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Address Type
+                  </label>
                   <Select
                     value={watch("address_type")}
                     onValueChange={(value) => setValue("address_type", value as "shipping" | "billing")}
@@ -233,19 +221,14 @@ export function AddressForm({
                 </div>
               )}
 
-              <div className="space-y-2">
-                <Label htmlFor="label">Label (Optional)</Label>
-                <Input
-                  id="label"
-                  {...register("label")}
-                  placeholder="Home, Office, etc."
-                />
-                {errors.label && (
-                  <p className="text-sm text-red-600">
-                    {errors.label.message}
-                  </p>
-                )}
-              </div>
+              <FormField
+                label="Label (Optional)"
+                id="label"
+                placeholder="Home, Office, etc."
+                register={register("label")}
+                error={errors.label}
+                disabled={isSubmitting}
+              />
             </div>
 
             <div className="flex items-center space-x-2">
@@ -254,7 +237,9 @@ export function AddressForm({
                 checked={watch("is_default")}
                 onCheckedChange={(checked) => setValue("is_default", checked as boolean)}
               />
-              <Label htmlFor="is_default">Set as default address</Label>
+              <label htmlFor="is_default" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Set as default address
+              </label>
             </div>
             {errors.is_default && (
               <p className="text-sm text-red-600">
@@ -265,11 +250,9 @@ export function AddressForm({
         </Card>
 
         <div className="flex justify-end space-x-4">
-          {onCancel && (
-            <Button type="button" variant="outline" onClick={onCancel}>
-              Cancel
-            </Button>
-          )}
+          <Button type="button" variant="outline" onClick={onCancel}>
+            Cancel
+          </Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? (
               <>
@@ -281,7 +264,7 @@ export function AddressForm({
             )}
           </Button>
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
   )
 } 

@@ -12,6 +12,7 @@ import {
   Tag,
   FolderOpen,
   MapPin,
+  Users,
 } from "lucide-react"
 
 const navigation = [
@@ -20,6 +21,7 @@ const navigation = [
   { name: "Categories", href: "/catalog/categories", icon: FolderOpen },
   { name: "Tags", href: "/catalog/tags", icon: Tag },
   { name: "Addresses", href: "/addresses", icon: MapPin },
+  { name: "Profiles", href: "/profiles", icon: Users },
 ]
 
 export default function Sidebar() {

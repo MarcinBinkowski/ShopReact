@@ -13,11 +13,14 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedProfilesIndexRouteImport } from './routes/_authenticated/profiles/index'
 import { Route as AuthenticatedAddressesIndexRouteImport } from './routes/_authenticated/addresses/index'
+import { Route as AuthenticatedProfilesNewRouteImport } from './routes/_authenticated/profiles/new'
 import { Route as AuthenticatedAddressesNewRouteImport } from './routes/_authenticated/addresses/new'
 import { Route as AuthenticatedCatalogTagsIndexRouteImport } from './routes/_authenticated/catalog/tags/index'
 import { Route as AuthenticatedCatalogProductsIndexRouteImport } from './routes/_authenticated/catalog/products/index'
 import { Route as AuthenticatedCatalogCategoriesIndexRouteImport } from './routes/_authenticated/catalog/categories/index'
+import { Route as AuthenticatedProfilesProfileIdEditRouteImport } from './routes/_authenticated/profiles/$profileId/edit'
 import { Route as AuthenticatedCatalogTagsNewRouteImport } from './routes/_authenticated/catalog/tags/new'
 import { Route as AuthenticatedCatalogProductsNewRouteImport } from './routes/_authenticated/catalog/products/new'
 import { Route as AuthenticatedCatalogCategoriesNewRouteImport } from './routes/_authenticated/catalog/categories/new'
@@ -45,10 +48,22 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedProfilesIndexRoute =
+  AuthenticatedProfilesIndexRouteImport.update({
+    id: '/profiles/',
+    path: '/profiles/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAddressesIndexRoute =
   AuthenticatedAddressesIndexRouteImport.update({
     id: '/addresses/',
     path: '/addresses/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProfilesNewRoute =
+  AuthenticatedProfilesNewRouteImport.update({
+    id: '/profiles/new',
+    path: '/profiles/new',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedAddressesNewRoute =
@@ -73,6 +88,12 @@ const AuthenticatedCatalogCategoriesIndexRoute =
   AuthenticatedCatalogCategoriesIndexRouteImport.update({
     id: '/catalog/categories/',
     path: '/catalog/categories/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProfilesProfileIdEditRoute =
+  AuthenticatedProfilesProfileIdEditRouteImport.update({
+    id: '/profiles/$profileId/edit',
+    path: '/profiles/$profileId/edit',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedCatalogTagsNewRoute =
@@ -123,11 +144,14 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/addresses/new': typeof AuthenticatedAddressesNewRoute
+  '/profiles/new': typeof AuthenticatedProfilesNewRoute
   '/addresses': typeof AuthenticatedAddressesIndexRoute
+  '/profiles': typeof AuthenticatedProfilesIndexRoute
   '/addresses/$addressId/edit': typeof AuthenticatedAddressesAddressIdEditRoute
   '/catalog/categories/new': typeof AuthenticatedCatalogCategoriesNewRoute
   '/catalog/products/new': typeof AuthenticatedCatalogProductsNewRoute
   '/catalog/tags/new': typeof AuthenticatedCatalogTagsNewRoute
+  '/profiles/$profileId/edit': typeof AuthenticatedProfilesProfileIdEditRoute
   '/catalog/categories': typeof AuthenticatedCatalogCategoriesIndexRoute
   '/catalog/products': typeof AuthenticatedCatalogProductsIndexRoute
   '/catalog/tags': typeof AuthenticatedCatalogTagsIndexRoute
@@ -140,11 +164,14 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/addresses/new': typeof AuthenticatedAddressesNewRoute
+  '/profiles/new': typeof AuthenticatedProfilesNewRoute
   '/addresses': typeof AuthenticatedAddressesIndexRoute
+  '/profiles': typeof AuthenticatedProfilesIndexRoute
   '/addresses/$addressId/edit': typeof AuthenticatedAddressesAddressIdEditRoute
   '/catalog/categories/new': typeof AuthenticatedCatalogCategoriesNewRoute
   '/catalog/products/new': typeof AuthenticatedCatalogProductsNewRoute
   '/catalog/tags/new': typeof AuthenticatedCatalogTagsNewRoute
+  '/profiles/$profileId/edit': typeof AuthenticatedProfilesProfileIdEditRoute
   '/catalog/categories': typeof AuthenticatedCatalogCategoriesIndexRoute
   '/catalog/products': typeof AuthenticatedCatalogProductsIndexRoute
   '/catalog/tags': typeof AuthenticatedCatalogTagsIndexRoute
@@ -159,11 +186,14 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/addresses/new': typeof AuthenticatedAddressesNewRoute
+  '/_authenticated/profiles/new': typeof AuthenticatedProfilesNewRoute
   '/_authenticated/addresses/': typeof AuthenticatedAddressesIndexRoute
+  '/_authenticated/profiles/': typeof AuthenticatedProfilesIndexRoute
   '/_authenticated/addresses/$addressId/edit': typeof AuthenticatedAddressesAddressIdEditRoute
   '/_authenticated/catalog/categories/new': typeof AuthenticatedCatalogCategoriesNewRoute
   '/_authenticated/catalog/products/new': typeof AuthenticatedCatalogProductsNewRoute
   '/_authenticated/catalog/tags/new': typeof AuthenticatedCatalogTagsNewRoute
+  '/_authenticated/profiles/$profileId/edit': typeof AuthenticatedProfilesProfileIdEditRoute
   '/_authenticated/catalog/categories/': typeof AuthenticatedCatalogCategoriesIndexRoute
   '/_authenticated/catalog/products/': typeof AuthenticatedCatalogProductsIndexRoute
   '/_authenticated/catalog/tags/': typeof AuthenticatedCatalogTagsIndexRoute
@@ -178,11 +208,14 @@ export interface FileRouteTypes {
     | '/login'
     | '/dashboard'
     | '/addresses/new'
+    | '/profiles/new'
     | '/addresses'
+    | '/profiles'
     | '/addresses/$addressId/edit'
     | '/catalog/categories/new'
     | '/catalog/products/new'
     | '/catalog/tags/new'
+    | '/profiles/$profileId/edit'
     | '/catalog/categories'
     | '/catalog/products'
     | '/catalog/tags'
@@ -195,11 +228,14 @@ export interface FileRouteTypes {
     | '/login'
     | '/dashboard'
     | '/addresses/new'
+    | '/profiles/new'
     | '/addresses'
+    | '/profiles'
     | '/addresses/$addressId/edit'
     | '/catalog/categories/new'
     | '/catalog/products/new'
     | '/catalog/tags/new'
+    | '/profiles/$profileId/edit'
     | '/catalog/categories'
     | '/catalog/products'
     | '/catalog/tags'
@@ -213,11 +249,14 @@ export interface FileRouteTypes {
     | '/login'
     | '/_authenticated/dashboard'
     | '/_authenticated/addresses/new'
+    | '/_authenticated/profiles/new'
     | '/_authenticated/addresses/'
+    | '/_authenticated/profiles/'
     | '/_authenticated/addresses/$addressId/edit'
     | '/_authenticated/catalog/categories/new'
     | '/_authenticated/catalog/products/new'
     | '/_authenticated/catalog/tags/new'
+    | '/_authenticated/profiles/$profileId/edit'
     | '/_authenticated/catalog/categories/'
     | '/_authenticated/catalog/products/'
     | '/_authenticated/catalog/tags/'
@@ -262,11 +301,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/profiles/': {
+      id: '/_authenticated/profiles/'
+      path: '/profiles'
+      fullPath: '/profiles'
+      preLoaderRoute: typeof AuthenticatedProfilesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/addresses/': {
       id: '/_authenticated/addresses/'
       path: '/addresses'
       fullPath: '/addresses'
       preLoaderRoute: typeof AuthenticatedAddressesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/profiles/new': {
+      id: '/_authenticated/profiles/new'
+      path: '/profiles/new'
+      fullPath: '/profiles/new'
+      preLoaderRoute: typeof AuthenticatedProfilesNewRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/addresses/new': {
@@ -295,6 +348,13 @@ declare module '@tanstack/react-router' {
       path: '/catalog/categories'
       fullPath: '/catalog/categories'
       preLoaderRoute: typeof AuthenticatedCatalogCategoriesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/profiles/$profileId/edit': {
+      id: '/_authenticated/profiles/$profileId/edit'
+      path: '/profiles/$profileId/edit'
+      fullPath: '/profiles/$profileId/edit'
+      preLoaderRoute: typeof AuthenticatedProfilesProfileIdEditRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/catalog/tags/new': {
@@ -352,11 +412,14 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedAddressesNewRoute: typeof AuthenticatedAddressesNewRoute
+  AuthenticatedProfilesNewRoute: typeof AuthenticatedProfilesNewRoute
   AuthenticatedAddressesIndexRoute: typeof AuthenticatedAddressesIndexRoute
+  AuthenticatedProfilesIndexRoute: typeof AuthenticatedProfilesIndexRoute
   AuthenticatedAddressesAddressIdEditRoute: typeof AuthenticatedAddressesAddressIdEditRoute
   AuthenticatedCatalogCategoriesNewRoute: typeof AuthenticatedCatalogCategoriesNewRoute
   AuthenticatedCatalogProductsNewRoute: typeof AuthenticatedCatalogProductsNewRoute
   AuthenticatedCatalogTagsNewRoute: typeof AuthenticatedCatalogTagsNewRoute
+  AuthenticatedProfilesProfileIdEditRoute: typeof AuthenticatedProfilesProfileIdEditRoute
   AuthenticatedCatalogCategoriesIndexRoute: typeof AuthenticatedCatalogCategoriesIndexRoute
   AuthenticatedCatalogProductsIndexRoute: typeof AuthenticatedCatalogProductsIndexRoute
   AuthenticatedCatalogTagsIndexRoute: typeof AuthenticatedCatalogTagsIndexRoute
@@ -368,13 +431,17 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedAddressesNewRoute: AuthenticatedAddressesNewRoute,
+  AuthenticatedProfilesNewRoute: AuthenticatedProfilesNewRoute,
   AuthenticatedAddressesIndexRoute: AuthenticatedAddressesIndexRoute,
+  AuthenticatedProfilesIndexRoute: AuthenticatedProfilesIndexRoute,
   AuthenticatedAddressesAddressIdEditRoute:
     AuthenticatedAddressesAddressIdEditRoute,
   AuthenticatedCatalogCategoriesNewRoute:
     AuthenticatedCatalogCategoriesNewRoute,
   AuthenticatedCatalogProductsNewRoute: AuthenticatedCatalogProductsNewRoute,
   AuthenticatedCatalogTagsNewRoute: AuthenticatedCatalogTagsNewRoute,
+  AuthenticatedProfilesProfileIdEditRoute:
+    AuthenticatedProfilesProfileIdEditRoute,
   AuthenticatedCatalogCategoriesIndexRoute:
     AuthenticatedCatalogCategoriesIndexRoute,
   AuthenticatedCatalogProductsIndexRoute:

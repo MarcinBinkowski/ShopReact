@@ -2490,8 +2490,9 @@ components:
           description: User's date of birth (optional)
         phone_number:
           type: string
-          description: Primary phone number with country code
-          maxLength: 20
+          description: 'Phone number in international format. Supports digits, spaces,
+            hyphens, parentheses, and optional ''+'' prefix. Example: +48131012012'
+          pattern: ^\+?[\d\s\-\(\)]+$
         profile_completed:
           type: boolean
           readOnly: true
@@ -2548,8 +2549,9 @@ components:
           description: User's date of birth (optional)
         phone_number:
           type: string
-          description: Primary phone number with country code
-          maxLength: 20
+          description: 'Phone number in international format. Supports digits, spaces,
+            hyphens, parentheses, and optional ''+'' prefix. Example: +48131012012'
+          pattern: ^\+?[\d\s\-\(\)]+$
     PatchedTag:
       type: object
       description: Serializer for Tag model.
@@ -2944,8 +2946,9 @@ components:
           description: User's date of birth (optional)
         phone_number:
           type: string
-          description: Primary phone number with country code
-          maxLength: 20
+          description: 'Phone number in international format. Supports digits, spaces,
+            hyphens, parentheses, and optional ''+'' prefix. Example: +48131012012'
+          pattern: ^\+?[\d\s\-\(\)]+$
         profile_completed:
           type: boolean
           readOnly: true
@@ -3018,8 +3021,9 @@ components:
           description: User's date of birth (optional)
         phone_number:
           type: string
-          description: Primary phone number with country code
-          maxLength: 20
+          description: 'Phone number in international format. Supports digits, spaces,
+            hyphens, parentheses, and optional ''+'' prefix. Example: +48131012012'
+          pattern: ^\+?[\d\s\-\(\)]+$
       required:
       - user
     ProfileList:
@@ -3028,6 +3032,14 @@ components:
         id:
           type: integer
           readOnly: true
+        first_name:
+          type: string
+          description: User's first name
+          maxLength: 150
+        last_name:
+          type: string
+          description: User's last name
+          maxLength: 150
         display_name:
           type: string
           readOnly: true
@@ -3042,10 +3054,16 @@ components:
           format: date-time
           readOnly: true
           description: Timestamp when the record was created
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Timestamp when the record was last updated
       required:
       - created_at
       - display_name
       - id
+      - updated_at
       - user_email
     ProfileMinimal:
       type: object
@@ -3090,8 +3108,9 @@ components:
           description: User's date of birth (optional)
         phone_number:
           type: string
-          description: Primary phone number with country code
-          maxLength: 20
+          description: 'Phone number in international format. Supports digits, spaces,
+            hyphens, parentheses, and optional ''+'' prefix. Example: +48131012012'
+          pattern: ^\+?[\d\s\-\(\)]+$
     StatusEnum:
       enum:
       - draft

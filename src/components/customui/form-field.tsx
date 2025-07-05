@@ -22,7 +22,6 @@ export function FormField({
   placeholder,
   error,
   disabled = false,
-  required = false,
   multiline = false,
   rows = 4,
   type = "text",
@@ -34,7 +33,6 @@ export function FormField({
     <div className="space-y-2">
       <Label htmlFor={id}>
         {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
       </Label>
       <Component
         id={id}

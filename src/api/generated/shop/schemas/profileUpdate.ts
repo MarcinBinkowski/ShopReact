@@ -23,8 +23,8 @@ export interface ProfileUpdate {
    */
   date_of_birth?: string | null;
   /**
-   * Primary phone number with country code
-   * @maxLength 20
+   * Phone number in international format. Supports digits, spaces, hyphens, parentheses, and optional '+' prefix. Example: +48131012012
+   * @pattern ^\+?[\d\s\-\(\)]+$
    */
   phone_number?: string;
 }

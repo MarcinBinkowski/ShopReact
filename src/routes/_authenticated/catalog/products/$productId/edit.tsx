@@ -76,8 +76,6 @@ function EditProductPage() {
 
   return (
     <ProductForm
-      title="Edit Product"
-      description="Update product information and images"
       initialData={product}
       onSubmit={handleSubmit}
       submitButtonText="Update Product"

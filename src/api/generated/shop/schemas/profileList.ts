@@ -8,10 +8,22 @@
 
 export interface ProfileList {
   readonly id: number;
+  /**
+   * User's first name
+   * @maxLength 150
+   */
+  first_name?: string;
+  /**
+   * User's last name
+   * @maxLength 150
+   */
+  last_name?: string;
   readonly display_name: string;
   readonly user_email: string;
   /** Whether profile has all required information for checkout */
   profile_completed?: boolean;
   /** Timestamp when the record was created */
   readonly created_at: string;
+  /** Timestamp when the record was last updated */
+  readonly updated_at: string;
 }

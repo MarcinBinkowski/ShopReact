@@ -42,8 +42,6 @@ function NewProductPage() {
 
   return (
     <ProductForm
-      title="Create New Product"
-      description="Add a new product to your catalog"
       onSubmit={handleSubmit}
       submitButtonText="Create Product"
       isSubmitting={createMutation.isPending}

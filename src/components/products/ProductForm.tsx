@@ -6,7 +6,7 @@ import { FormField } from "@/components/customui/form-field"
 import { Spinner } from "@/components/customui/spinner"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import type { ProductDetail } from '@/api/generated/shop/schemas'
 
 import { toast } from "sonner"
@@ -24,8 +24,6 @@ import { catalogCategoriesList, catalogTagsList } from "@/api/generated/shop/cat
 import { AsyncPaginateSelect, OptionType } from "@/components/customui/AsyncPaginateSelect";
 
 interface ProductFormProps {
-  title: string
-  description: string
   initialData?: Partial<ProductDetail>
   onSubmit: (data: any) => Promise<void>
   submitButtonText: string
@@ -49,8 +47,6 @@ function localDatetimeToIso(local: string | null | undefined) {
 }
 
 export function ProductForm({
-  title,
-  description,
   initialData,
   onSubmit,
   submitButtonText,
